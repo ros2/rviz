@@ -2,6 +2,36 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Add OverlayImage and OverlayCamera displays and an OverlayPicker tool (`#1830 <https://github.com/ros2/rviz/issues/1830>`_)
+* Fix Invoke deprecation (`#1892 <https://github.com/ros2/rviz/issues/1892>`_)
+* Replace retained points when retransforming clouds (`#1882 <https://github.com/ros2/rviz/issues/1882>`_)
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* rviz_default_plugins optimizations (`#1860 <https://github.com/ros2/rviz/issues/1860>`_)
+* String optimization (`#1861 <https://github.com/ros2/rviz/issues/1861>`_)
+* Minor fixes (`#1864 <https://github.com/ros2/rviz/issues/1864>`_)
+* Fix TF trajectory build warnings (`#1867 <https://github.com/ros2/rviz/issues/1867>`_)
+* Add TFTrajectory display to visualize the path a TF frame has taken (`#1831 <https://github.com/ros2/rviz/issues/1831>`_)
+* Decouple template-heavy dependencies from VisualTestFixture (`#1857 <https://github.com/ros2/rviz/issues/1857>`_)
+* rviz_default_plugins: Granular includes and include what you use (`#1855 <https://github.com/ros2/rviz/issues/1855>`_)
+* Contributors: Alejandro Hernández Cordero, Iori Yanokura, John Cameron Furey, Maurice Alexander Purnawan, Scott K Logan, Tanish Jain, mosfet80
+
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Fix for every old swatch leaking a scene_node\_ (`#1843 <https://github.com/ros2/rviz/issues/1843>`_)
+* Discover point cloud transports dynamically (`#1842 <https://github.com/ros2/rviz/issues/1842>`_)
+* Disable cursor-pixel readout in `CameraDisplay` (`#1748 <https://github.com/ros2/rviz/issues/1748>`_)
+* Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_)
+* Cleanup headers (`#1829 <https://github.com/ros2/rviz/issues/1829>`_)
+* split rviz_default_plugins into per-family shared libraries (`#1826 <https://github.com/ros2/rviz/issues/1826>`_)
+* Optimize rclcpp headers (`#1824 <https://github.com/ros2/rviz/issues/1824>`_)
+* Optimize ogre headers (`#1823 <https://github.com/ros2/rviz/issues/1823>`_)
+* Optimize include headers (`#1799 <https://github.com/ros2/rviz/issues/1799>`_)
+* Moved implementation to cpp (`#1798 <https://github.com/ros2/rviz/issues/1798>`_)
+* Contributors: Alejandro Hernández Cordero, Arne Baeyens, Matthew Shields, Maurice Alexander Purnawan, Paul Erik Frivold
+
 16.0.2 (2026-07-14)
 -------------------
 * use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)

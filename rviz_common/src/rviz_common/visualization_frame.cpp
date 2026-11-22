@@ -457,33 +457,18 @@ void VisualizationFrame::initMenus()
 {
   file_menu_ = menuBar()->addMenu("&File");
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QAction * file_menu_open_action = file_menu_->addAction(
     "&Open Config", QKeySequence("Ctrl+O"));
   connect(file_menu_open_action, &QAction::triggered, this, &VisualizationFrame::onOpen);
-#else
-  QAction * file_menu_open_action = file_menu_->addAction(
-    "&Open Config", this, SLOT(onOpen()), QKeySequence("Ctrl+O"));
-#endif
   this->addAction(file_menu_open_action);
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QAction * file_menu_save_action = file_menu_->addAction(
     "&Save Config", QKeySequence("Ctrl+S"));
   connect(file_menu_save_action, &QAction::triggered, this, &VisualizationFrame::onSave);
-#else
-  QAction * file_menu_save_action = file_menu_->addAction(
-    "&Save Config", this, SLOT(onSave()), QKeySequence("Ctrl+S"));
-#endif
   this->addAction(file_menu_save_action);
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QAction * file_menu_save_as_action = file_menu_->addAction(
     "Save Config &As", QKeySequence("Ctrl+Shift+S"));
   connect(
     file_menu_save_as_action, &QAction::triggered, this, &VisualizationFrame::onSaveAs);
-#else
-  QAction * file_menu_save_as_action = file_menu_->addAction(
-    "Save Config &As", this, SLOT(onSaveAs()), QKeySequence("Ctrl+Shift+S"));
-#endif
   this->addAction(file_menu_save_as_action);
 
   recent_configs_menu_ = file_menu_->addMenu("&Recent Configs");
@@ -494,13 +479,8 @@ void VisualizationFrame::initMenus()
   }
   file_menu_->addSeparator();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QAction * file_menu_quit_action = file_menu_->addAction("&Quit", QKeySequence("Ctrl+Q"));
   connect(file_menu_quit_action, &QAction::triggered, this, &QWidget::close);
-#else
-  QAction * file_menu_quit_action = file_menu_->addAction(
-    "&Quit", this, SLOT(close()), QKeySequence("Ctrl+Q"));
-#endif
   this->addAction(file_menu_quit_action);
 
   view_menu_ = menuBar()->addMenu("&Panels");
@@ -508,13 +488,8 @@ void VisualizationFrame::initMenus()
   delete_view_menu_ = view_menu_->addMenu("&Delete Panel");
   delete_view_menu_->setEnabled(false);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QAction * fullscreen_action = view_menu_->addAction("&Fullscreen", QKeySequence(Qt::Key_F11));
   connect(fullscreen_action, &QAction::triggered, this, &VisualizationFrame::setFullScreen);
-#else
-  QAction * fullscreen_action = view_menu_->addAction(
-    "&Fullscreen", this, SLOT(setFullScreen(bool)), QKeySequence(Qt::Key_F11));
-#endif
   fullscreen_action->setCheckable(true);
   this->addAction(fullscreen_action);  // Also add to window, or the shortcut doest work
                                        // when the menu is hidden.

@@ -32,10 +32,8 @@
 #ifndef RVIZ_COMMON__RENDER_PANEL_HPP_
 #define RVIZ_COMMON__RENDER_PANEL_HPP_
 
-#include <map>
 #include <memory>
 #include <mutex>
-#include <vector>
 
 #include <OgreVector.h>
 
@@ -118,6 +116,9 @@ public:
   // virtual void sceneManagerDestroyed(Ogre::SceneManager * source);
 
 protected:
+  /// Forward key presses received by the native render window to this widget.
+  bool eventFilter(QObject * watched, QEvent * event) override;
+
   /// Called when any mouse event happens inside the render window.
   void onRenderWindowMouseEvents(QMouseEvent * event);
 

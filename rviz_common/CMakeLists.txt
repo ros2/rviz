@@ -25,26 +25,22 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+option(RVIZ_COMMON_ENABLE_PCH
+  "Precompile common Qt6/std headers to speed up rviz_common compilation"
+  ON)
+if(APPLE)
+  set(RVIZ_COMMON_ENABLE_PCH OFF)
+endif()
+if(CMAKE_VERSION VERSION_LESS 3.16)
+  set(RVIZ_COMMON_ENABLE_PCH OFF)
+endif()
+
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros_core REQUIRED)
 # do find_package(rviz_ogre_vendor) first to make sure the custom OGRE is found
 find_package(rviz_ogre_vendor REQUIRED)
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
-set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
-if(${QT_VERSION} VERSION_LESS 5.15.0)
-  function(qt_wrap_cpp out)
-    qt5_wrap_cpp(_sources ${ARGN})
-    set("${out}" ${_sources} PARENT_SCOPE)
-  endfunction()
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
 
 find_package(geometry_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -213,10 +209,11 @@ set(rviz_common_source_files
   src/rviz_common/ros_integration/ros_client_abstraction.cpp
   src/rviz_common/ros_integration/ros_node_abstraction.cpp
   src/rviz_common/ros_topic_display.cpp
+  src/rviz_common/ros_topic_utils.cpp
   src/rviz_common/scaled_image_widget.cpp
   src/rviz_common/screenshot_dialog.cpp
   src/rviz_common/selection_panel.cpp
-  src/rviz_common/interaction/forwards.cpp
+  src/rviz_common/interaction/color_conversion.cpp
   src/rviz_common/interaction/handler_manager.cpp
   src/rviz_common/interaction/selection_handler.cpp
   src/rviz_common/interaction/selection_manager.cpp
@@ -260,7 +257,7 @@ target_link_libraries(rviz_common PUBLIC
   geometry_msgs::geometry_msgs
   message_filters::message_filters
   pluginlib::pluginlib
-  Qt${QT_VERSION_MAJOR}::Widgets
+  Qt6::Widgets
   rclcpp::rclcpp
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
@@ -282,12 +279,24 @@ target_link_libraries(rviz_common PRIVATE
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_common PRIVATE "RVIZ_COMMON_BUILDING_LIBRARY")
 
+if(RVIZ_COMMON_ENABLE_PCH)
+  target_precompile_headers(rviz_common PRIVATE src/rviz_common/precompile.hpp)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    # Required for ccache to still cache compilations that consume the PCH
+    # under GCC -- without -fpch-preprocess, every such TU reports "Could
+    # not use precompiled header" and silently stops being cacheable.
+    # Clang's -include-pch path doesn't need this. See ccache(1),
+    # PRECOMPILED HEADERS.
+    target_compile_options(rviz_common PRIVATE -fpch-preprocess)
+  endif()
+endif()
+
 ament_export_dependencies(
   ament_cmake_ros_core
   geometry_msgs
   message_filters
   pluginlib
-  Qt${QT_VERSION_MAJOR}
+  Qt6
   rclcpp
   rviz_ogre_vendor
   rviz_rendering
@@ -299,10 +308,6 @@ ament_export_dependencies(
   yaml_cpp_vendor
   yaml-cpp
 )
-
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-ament_export_libraries(rviz_common)
 
 # Export modern CMake targets
 ament_export_targets(rviz_common)
@@ -370,12 +375,27 @@ if(BUILD_TESTING)
   target_link_libraries(test_support_objects PUBLIC
     rviz_common
     GTest::gmock
-    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt6::Widgets
     rviz_ogre_vendor::OgreMain
     rviz_ogre_vendor::OgreOverlay
   )
 
   set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
+
+  ament_add_gmock(render_panel_test
+    test/render_panel_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET render_panel_test)
+    target_include_directories(render_panel_test PRIVATE test)
+    target_link_libraries(render_panel_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      Qt6::Widgets
+    )
+  endif()
 
   # Consolidate core tests
   ament_add_gmock(rviz_common_core_tests
@@ -383,10 +403,12 @@ if(BUILD_TESTING)
     test/uniform_string_stream_test.cpp
     test/property_test.cpp
     test/display_test.cpp
+    test/message_filter_display_test.cpp
     test/mock_display_group.cpp
     test/properties/qos_profile_property_test.cpp
     test/visualizer_app_test.cpp
     test/ros_node_abstraction_test.cpp
+    test/ros_topic_utils_test.cpp
     test/transformation/identity_frame_transformer_test.cpp
     ${TEST_SUPPORT_OBJECTS}
     ${SKIP_DISPLAY_TESTS}
@@ -397,7 +419,7 @@ if(BUILD_TESTING)
       rviz_common
       rviz_ogre_vendor::OgreMain
       rviz_ogre_vendor::OgreOverlay
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       yaml-cpp::yaml-cpp
     )
   endif()
@@ -429,7 +451,7 @@ if(BUILD_TESTING)
       -D_TEST_PLUGIN_DESCRIPTIONS="${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(display_factory_test
       rviz_common
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       tinyxml2::tinyxml2)
   endif()
 

@@ -34,6 +34,7 @@
 
 #include <algorithm>
 #include <format>  // NOLINT(build/include_order) cpplint predates C++20 headers
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -60,6 +61,7 @@
 #include "rviz_common/load_resource.hpp"
 #include "rviz_common/logging.hpp"
 #include "rviz_common/ros_integration/ros_node_abstraction.hpp"
+#include "rviz_common/ros_topic_utils.hpp"
 
 namespace rviz_common
 {
@@ -151,6 +153,10 @@ void getPluginGroups(
 {
   std::map<std::string, std::vector<std::string>> topic_names_and_types =
     rviz_ros_node.lock()->get_topic_names_and_types();
+
+  std::erase_if(
+    topic_names_and_types,
+    [](const auto & map_pair) {return isTopicOrServiceHidden(map_pair.first);});
 
   for (const auto & map_pair : topic_names_and_types) {
     QString topic = QString::fromStdString(map_pair.first);
@@ -645,7 +651,9 @@ void TopicDisplayWidget::findPlugins(DisplayFactory * factory)
 
   for (const auto & plugin : plugins) {
     QSet<QString> topic_types = factory->getMessageTypes(plugin.id);
-    Q_FOREACH (QString topic_type, topic_types) {
+    // topic_type is taken by value: it is rewritten below when the declared type is not
+    // fully qualified.
+    for (QString topic_type : topic_types) {
       // Check if the type name is fully qualified (e.g. in 'msg' namespace).
       // If not, then insert 'msg' and log a warning.
       // For now, we assume that all types supported by plugins have the form

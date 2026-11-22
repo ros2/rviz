@@ -33,10 +33,16 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/clock.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
 #include "tf2_ros/buffer.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
+#include "geometry_msgs/msg/transform.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
+#include "std_msgs/msg/header.hpp"
 
 #include "rviz_default_plugins/transformation/tf_frame_transformer.hpp"
 

@@ -35,6 +35,8 @@
 #include <string>
 #include <vector>
 
+#include "rclcpp/clock.hpp"
+
 #include "rviz_common/transformation/tf2_helpers/tf2_conversion_helpers.hpp"
 
 namespace rviz_common

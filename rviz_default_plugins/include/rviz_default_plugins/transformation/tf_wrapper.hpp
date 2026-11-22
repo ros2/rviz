@@ -35,6 +35,7 @@
 #include <string>
 #include <vector>
 
+#include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
 
 #include "tf2_ros/buffer.hpp"

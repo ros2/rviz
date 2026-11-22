@@ -2,6 +2,31 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Report incompatible QoS in message filter displays (`#1837 <https://github.com/ros2/rviz/issues/1837>`_)
+* Fix Invoke deprecation (`#1892 <https://github.com/ros2/rviz/issues/1892>`_)
+* Restore keyboard shortcuts after camera interaction (`#1891 <https://github.com/ros2/rviz/issues/1891>`_)
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* Removed _buf_cpu topic from Image display selection (`#1820 <https://github.com/ros2/rviz/issues/1820>`_)
+* perf: use EventsCBGExecutor in visualization manager (`#1874 <https://github.com/ros2/rviz/issues/1874>`_)
+* Granular includes and include what you use (`#1854 <https://github.com/ros2/rviz/issues/1854>`_)
+* Remove unused point_idx variable (`#1856 <https://github.com/ros2/rviz/issues/1856>`_)
+* Minor cleanups (`#1848 <https://github.com/ros2/rviz/issues/1848>`_)
+* Contributors: Alejandro Hernández Cordero, Dylan Gallagher, Miko Parkkinen, Skyler Medeiros, Tanish Jain, mosfet80
+
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Fix implicit narrowing in tf2 time conversion (`#1834 <https://github.com/ros2/rviz/issues/1834>`_)
+* Cleanup headers (`#1829 <https://github.com/ros2/rviz/issues/1829>`_)
+* Optimize rclcpp headers (`#1824 <https://github.com/ros2/rviz/issues/1824>`_)
+* Fix tinyxml link error (`#1817 <https://github.com/ros2/rviz/issues/1817>`_)
+* Removed windows warning (`#1819 <https://github.com/ros2/rviz/issues/1819>`_)
+* Optimize include headers (`#1799 <https://github.com/ros2/rviz/issues/1799>`_)
+* Moved implementation to cpp (`#1798 <https://github.com/ros2/rviz/issues/1798>`_)
+* Contributors: Alejandro Hernández Cordero, ktyang512
+
 16.0.2 (2026-07-14)
 -------------------
 * SelectionHandler::registerHandle() handle null pointer (`#1710 <https://github.com/ros2/rviz/issues/1710>`_)

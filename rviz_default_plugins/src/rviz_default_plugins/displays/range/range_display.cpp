@@ -33,6 +33,10 @@
 #include <limits>
 #include <memory>
 
+#include <OgreSceneManager.h>
+
+#include "rclcpp/time.hpp"
+
 #include "rviz_rendering/objects/shape.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/properties/float_property.hpp"

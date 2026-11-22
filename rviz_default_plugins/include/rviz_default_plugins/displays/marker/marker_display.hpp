@@ -37,6 +37,8 @@
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
+#include "rclcpp/subscription.hpp"
+
 #include "rviz_common/message_filter_display.hpp"
 
 #include "rviz_default_plugins/displays/marker/marker_common.hpp"

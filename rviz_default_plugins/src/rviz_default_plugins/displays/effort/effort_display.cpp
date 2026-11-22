@@ -42,12 +42,21 @@
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include <tf2/LinearMath/Quaternion.hpp>
+#include <tf2/LinearMath/Vector3.hpp>
+
+#include <rviz_common/frame_manager_iface.hpp>
 #include <rviz_common/validate_floats.hpp>
 
 #include <rviz_common/properties/property.hpp>
 #include <rviz_rendering/objects/effort_visual.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
+#include <rclcpp/event_handler.hpp>
+#include <rclcpp/exceptions/exceptions.hpp>
 #include <rclcpp/logging.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/subscription_options.hpp>
+#include <rclcpp/time.hpp>
 #include <urdf/model.hpp>
 
 using namespace std::chrono_literals;

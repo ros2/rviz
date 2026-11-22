@@ -115,7 +115,7 @@ void MarkerCommon::clearMarkers()
   namespaces_.clear();
 }
 
-void MarkerCommon::deleteMarker(MarkerID id)
+void MarkerCommon::deleteMarker(const MarkerID & id)
 {
   deleteMarkerStatus(id);
 
@@ -186,13 +186,14 @@ void MarkerCommon::deleteAllMarkers()
   ns_to_ids_.clear();
 }
 
-void MarkerCommon::setMarkerStatus(MarkerID id, StatusLevel level, const std::string & text)
+void MarkerCommon::setMarkerStatus(
+  const MarkerID & id, StatusLevel level, const std::string & text)
 {
   std::string marker_name = id.first + "/" + std::to_string(id.second);
   display_->setStatusStd(level, marker_name, text);
 }
 
-void MarkerCommon::deleteMarkerStatus(MarkerID id)
+void MarkerCommon::deleteMarkerStatus(const MarkerID & id)
 {
   std::string marker_name = id.first + "/" + std::to_string(id.second);
   display_->deleteStatusStd(marker_name);
@@ -203,7 +204,7 @@ resource_retriever::Retriever * MarkerCommon::getResourceRetriever()
   return &this->retriever_;
 }
 
-void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr marker)
+void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstSharedPtr & marker)
 {
   std::unique_lock<std::mutex> lock(queue_mutex_);
 
@@ -211,7 +212,7 @@ void MarkerCommon::addMessage(const visualization_msgs::msg::Marker::ConstShared
 }
 
 void MarkerCommon::addMessage(
-  const visualization_msgs::msg::MarkerArray::ConstSharedPtr array)
+  const visualization_msgs::msg::MarkerArray::ConstSharedPtr & array)
 {
   using ns_type = decltype(visualization_msgs::msg::Marker::ns);
   using id_type = decltype(visualization_msgs::msg::Marker::id);
@@ -260,7 +261,8 @@ bool validateFloats(const visualization_msgs::msg::Marker & msg)
   return valid;
 }
 
-void MarkerCommon::processMessage(const visualization_msgs::msg::Marker::ConstSharedPtr message)
+void MarkerCommon::processMessage(
+  const visualization_msgs::msg::Marker::ConstSharedPtr & message)
 {
   if (!validateFloats(*message)) {
     setMarkerStatus(
@@ -311,7 +313,7 @@ QHash<QString, MarkerNamespace *>::const_iterator MarkerCommon::getMarkerNamespa
   return ns_it;
 }
 
-void MarkerCommon::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr message)
+void MarkerCommon::processAdd(const visualization_msgs::msg::Marker::ConstSharedPtr & message)
 {
   deleteMarkerStatus(MarkerID(message->ns, message->id));
 
@@ -372,7 +374,8 @@ void MarkerCommon::configureMarker(
   context_->queueRender();
 }
 
-void MarkerCommon::processDelete(const visualization_msgs::msg::Marker::ConstSharedPtr message)
+void MarkerCommon::processDelete(
+  const visualization_msgs::msg::Marker::ConstSharedPtr & message)
 {
   deleteMarker(MarkerID(message->ns, message->id));
 

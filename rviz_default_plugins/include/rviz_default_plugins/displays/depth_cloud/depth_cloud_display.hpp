@@ -32,7 +32,6 @@
 #define RVIZ_DEFAULT_PLUGINS__DISPLAYS__DEPTH_CLOUD__DEPTH_CLOUD_DISPLAY_HPP_
 
 #ifndef Q_MOC_RUN
-#include <QObject>  // NOLINT: cpplint cannot handle the include order here
 #include <OgreQuaternion.h>
 #include <OgreVector.h>
 
@@ -47,6 +46,10 @@
 
 #include <image_transport/image_transport.hpp>
 #include <image_transport/subscriber_filter.hpp>
+
+#include "rclcpp/qos.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/time.hpp"
 
 #include <rviz_common/depth_cloud_mld.hpp>
 #include <rviz_common/display.hpp>
@@ -70,7 +73,6 @@
 
 #include "rviz_default_plugins/visibility_control.hpp"
 
-#include <QMap>  // NOLINT: cpplint cannot handle the include order here
 #include <QString>  // NOLINT: cpplint cannot handle the include order here
 
 namespace rviz_default_plugins
@@ -99,8 +101,8 @@ public:
 
   void processDepthMessage(const sensor_msgs::msg::Image::ConstSharedPtr msg);
   void processMessage(
-    const sensor_msgs::msg::Image::ConstSharedPtr depth_msg,
-    const sensor_msgs::msg::Image::ConstSharedPtr rgb_msg);
+    const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
+    const sensor_msgs::msg::Image::ConstSharedPtr & rgb_msg);
 
 protected Q_SLOTS:
   void updateQueueSize();

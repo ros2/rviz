@@ -34,6 +34,8 @@
 #include <memory>
 #include <string>
 
+#include <OgreSceneNode.h>
+
 #include "rviz_rendering/objects/arrow.hpp"
 #include "rviz_rendering/objects/axes.hpp"
 
@@ -248,7 +250,7 @@ void OdometryDisplay::updateShapeVisibility()
   }
 }
 
-bool validateFloats(nav_msgs::msg::Odometry msg)
+bool validateFloats(const nav_msgs::msg::Odometry & msg)
 {
   bool valid = true;
   valid = valid && rviz_common::validateFloats(msg.pose.pose);
@@ -257,7 +259,7 @@ bool validateFloats(nav_msgs::msg::Odometry msg)
   return valid;
 }
 
-bool validateQuaternion(nav_msgs::msg::Odometry msg)
+bool validateQuaternion(const nav_msgs::msg::Odometry & msg)
 {
   return std::abs(
     (msg.pose.pose.orientation.x * msg.pose.pose.orientation.x +
@@ -339,7 +341,7 @@ std::unique_ptr<rviz_rendering::Arrow> OdometryDisplay::createAndSetArrow(
   float alpha = alpha_property_->getFloat();
 
   auto arrow = std::make_unique<rviz_rendering::Arrow>(
-    scene_manager_, scene_node_->createChildSceneNode(),
+    scene_manager_, scene_node_,
     shaft_length_property_->getFloat(),
     shaft_radius_property_->getFloat(),
     head_length_property_->getFloat(),
@@ -357,7 +359,7 @@ std::unique_ptr<rviz_rendering::Axes> OdometryDisplay::createAndSetAxes(
   const Ogre::Vector3 & position, const Ogre::Quaternion & orientation, bool use_axes)
 {
   auto axes = std::make_unique<rviz_rendering::Axes>(
-    scene_manager_, scene_node_->createChildSceneNode(),
+    scene_manager_, scene_node_,
     axes_length_property_->getFloat(),
     axes_radius_property_->getFloat());
   axes->setPosition(position);
@@ -370,10 +372,10 @@ std::unique_ptr<rviz_rendering::Axes> OdometryDisplay::createAndSetAxes(
 std::unique_ptr<rviz_rendering::CovarianceVisual> OdometryDisplay::createAndSetCovarianceVisual(
   const Ogre::Vector3 & position,
   const Ogre::Quaternion & orientation,
-  nav_msgs::msg::Odometry::ConstSharedPtr message)
+  const nav_msgs::msg::Odometry::ConstSharedPtr & message)
 {
   auto covariance_visual = std::make_unique<rviz_rendering::CovarianceVisual>(
-    scene_manager_, scene_node_->createChildSceneNode());
+    scene_manager_, scene_node_);
   covariance_visual->setPosition(position);
   covariance_visual->setOrientation(orientation);
   auto quaternion = message->pose.pose.orientation;

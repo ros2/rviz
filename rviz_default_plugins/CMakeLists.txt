@@ -52,6 +52,39 @@ endif()
 # cheaper: editing one display no longer relinks every test executable.
 set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
+# Precompiling the Qt6/OGRE/std headers that show up with near-identical
+# parse cost in almost every translation unit here cuts a clean build of
+# this package by roughly a fifth (measured with clang -ftime-trace: ~23%
+# wall-clock, ~24% CPU-time on a representative build). Only verified on
+# Linux so far: OGRE's own (separate) internal PCH has already broken the
+# macOS build once (see https://github.com/ros2/rviz/pull/914 and
+# https://github.com/ros2/rviz/issues/943), so this defaults off on Apple
+# until someone confirms it's fine there.
+option(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH
+  "Precompile common Qt6/OGRE/std headers to speed up rviz_default_plugins compilation"
+  ON)
+if(APPLE)
+  set(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH OFF)
+endif()
+# target_precompile_headers() requires CMake >= 3.16, newer than this
+# package's own cmake_minimum_required(); guard rather than bump that, since
+# nothing else here needs the newer floor.
+if(CMAKE_VERSION VERSION_LESS 3.16)
+  set(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH OFF)
+endif()
+
+# Wraps target_precompile_headers() with the extra flag ccache needs to
+# still cache compilations that consume the PCH under GCC -- without
+# -fpch-preprocess, every such TU reports "Could not use precompiled
+# header" and silently stops being cacheable. Clang's -include-pch path
+# doesn't need this. See ccache(1), PRECOMPILED HEADERS.
+function(rviz_default_plugins_target_precompile_headers target)
+  target_precompile_headers(${target} PRIVATE src/rviz_default_plugins/precompile.hpp)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(${target} PRIVATE -fpch-preprocess)
+  endif()
+endfunction()
+
 # We specifically don't turn on CMAKE_AUTOMOC, since it generates one huge
 # mocs_compilation.cpp file that takes a lot of memory to compile.  Instead
 # we create individual moc files that can be compiled separately.
@@ -63,21 +96,7 @@ find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 
-# Avoid find_package(QT NAMES Qt6 Qt5 ...) due to CMake's default ascending path resolution
-find_package(Qt6 QUIET COMPONENTS Test Widgets)
-if(Qt6_FOUND)
-  set(QT_VERSION_MAJOR 6)
-else()
-  find_package(Qt5 REQUIRED COMPONENTS Test Widgets)
-  set(QT_VERSION_MAJOR 5)
-endif()
-set(QT_VERSION "${Qt${QT_VERSION_MAJOR}_VERSION}")
-if(${QT_VERSION} VERSION_LESS 5.15.0)
-  function(qt_wrap_cpp out)
-    qt5_wrap_cpp(_sources ${ARGN})
-    set("${out}" ${_sources} PARENT_SCOPE)
-  endfunction()
-endif()
+find_package(Qt6 6.4 REQUIRED COMPONENTS Test Widgets)
 
 find_package(geometry_msgs REQUIRED)
 
@@ -126,6 +145,7 @@ set(rviz_default_plugins_headers_to_moc
   include/rviz_default_plugins/displays/temperature/temperature_display.hpp
   include/rviz_default_plugins/displays/tf/frame_info.hpp
   include/rviz_default_plugins/displays/tf/tf_display.hpp
+  include/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display.hpp
   include/rviz_default_plugins/displays/twist/twist_display.hpp
   include/rviz_default_plugins/displays/wrench/wrench_display.hpp
   include/rviz_default_plugins/robot/robot.hpp
@@ -165,6 +185,12 @@ set(rviz_default_plugins_marker_headers_to_moc
   include/rviz_default_plugins/displays/interactive_markers/interactive_marker_namespace_property.hpp
 )
 
+set(rviz_default_plugins_overlay_headers_to_moc
+  include/rviz_default_plugins/displays/overlay_camera/overlay_camera_display.hpp
+  include/rviz_default_plugins/displays/overlay_image/overlay_image_display.hpp
+  include/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.hpp
+)
+
 foreach(header "${rviz_default_plugins_headers_to_moc}")
   qt_wrap_cpp(rviz_default_plugins_moc_files "${header}")
 endforeach()
@@ -179,6 +205,10 @@ endforeach()
 
 foreach(header "${rviz_default_plugins_marker_headers_to_moc}")
   qt_wrap_cpp(rviz_default_plugins_marker_moc_files "${header}")
+endforeach()
+
+foreach(header "${rviz_default_plugins_overlay_headers_to_moc}")
+  qt_wrap_cpp(rviz_default_plugins_overlay_moc_files "${header}")
 endforeach()
 
 set(rviz_default_plugins_source_files
@@ -213,6 +243,7 @@ set(rviz_default_plugins_source_files
   src/rviz_default_plugins/displays/tf/frame_info.cpp
   src/rviz_default_plugins/displays/tf/frame_selection_handler.cpp
   src/rviz_default_plugins/displays/tf/tf_display.cpp
+  src/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display.cpp
   src/rviz_default_plugins/displays/wrench/wrench_display.cpp
   src/rviz_default_plugins/displays/twist/twist_display.cpp
   src/rviz_default_plugins/robot/robot.cpp
@@ -287,6 +318,13 @@ set(rviz_default_plugins_marker_source_files
   src/rviz_default_plugins/displays/marker/marker_display.cpp
 )
 
+set(rviz_default_plugins_overlay_source_files
+  src/rviz_default_plugins/displays/overlay/overlay_utils.cpp
+  src/rviz_default_plugins/displays/overlay_camera/overlay_camera_display.cpp
+  src/rviz_default_plugins/displays/overlay_image/overlay_image_display.cpp
+  src/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool.cpp
+)
+
 set(rviz_default_plugins_public_link_libraries
   ament_cmake_ros_core::ament_ros_defaults
   geometry_msgs::geometry_msgs
@@ -317,6 +355,9 @@ target_link_libraries(rviz_default_plugins_pointcloud PUBLIC
 )
 target_link_libraries(rviz_default_plugins_pointcloud PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_pointcloud PRIVATE "RVIZ_DEFAULT_PLUGINS_POINTCLOUD_BUILDING_LIBRARY")
+if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
+  rviz_default_plugins_target_precompile_headers(rviz_default_plugins_pointcloud)
+endif()
 
 add_library(rviz_default_plugins_image SHARED
   ${rviz_default_plugins_image_moc_files}
@@ -332,6 +373,9 @@ target_link_libraries(rviz_default_plugins_image PUBLIC
 )
 target_link_libraries(rviz_default_plugins_image PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_image PRIVATE "RVIZ_DEFAULT_PLUGINS_IMAGE_BUILDING_LIBRARY")
+if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
+  rviz_default_plugins_target_precompile_headers(rviz_default_plugins_image)
+endif()
 
 add_library(rviz_default_plugins_marker SHARED
   ${rviz_default_plugins_marker_moc_files}
@@ -346,6 +390,27 @@ target_link_libraries(rviz_default_plugins_marker PUBLIC
 )
 target_link_libraries(rviz_default_plugins_marker PRIVATE gz-math::core)
 target_compile_definitions(rviz_default_plugins_marker PRIVATE "RVIZ_DEFAULT_PLUGINS_MARKER_BUILDING_LIBRARY")
+if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
+  rviz_default_plugins_target_precompile_headers(rviz_default_plugins_marker)
+endif()
+
+add_library(rviz_default_plugins_overlay SHARED
+  ${rviz_default_plugins_overlay_moc_files}
+  ${rviz_default_plugins_overlay_source_files}
+)
+target_include_directories(rviz_default_plugins_overlay PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
+# The overlay displays decode images with the image family's ROSImageTexture.
+target_link_libraries(rviz_default_plugins_overlay PUBLIC
+  rviz_default_plugins_image
+  ${rviz_default_plugins_public_link_libraries}
+)
+target_compile_definitions(rviz_default_plugins_overlay PRIVATE "RVIZ_DEFAULT_PLUGINS_OVERLAY_BUILDING_LIBRARY")
+if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
+  rviz_default_plugins_target_precompile_headers(rviz_default_plugins_overlay)
+endif()
 
 add_library(rviz_default_plugins SHARED
   ${rviz_default_plugins_moc_files}
@@ -361,6 +426,7 @@ target_link_libraries(rviz_default_plugins PUBLIC
   rviz_default_plugins_pointcloud
   rviz_default_plugins_image
   rviz_default_plugins_marker
+  rviz_default_plugins_overlay
   ${rviz_default_plugins_public_link_libraries}
 )
 # pluginlib dlopens only this library; the plugin factories of the family
@@ -378,11 +444,11 @@ target_link_libraries(rviz_default_plugins PRIVATE
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(rviz_default_plugins PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+if(RVIZ_DEFAULT_PLUGINS_ENABLE_PCH)
+  rviz_default_plugins_target_precompile_headers(rviz_default_plugins)
+endif()
 
 pluginlib_export_plugin_description_file(rviz_common plugins_description.xml)
-
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
 
 # Export modern CMake targets
 ament_export_targets(rviz_default_plugins HAS_LIBRARY_TARGET)
@@ -396,7 +462,7 @@ ament_export_dependencies(
   map_msgs
   nav_msgs
   point_cloud_transport
-  Qt${QT_VERSION_MAJOR}
+  Qt6
   rclcpp
   rviz_common
   rviz_ogre_vendor
@@ -417,6 +483,7 @@ install(
     rviz_default_plugins_pointcloud
     rviz_default_plugins_image
     rviz_default_plugins_marker
+    rviz_default_plugins_overlay
   EXPORT rviz_default_plugins
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -473,7 +540,7 @@ if(BUILD_TESTING)
     rclcpp::rclcpp
     rviz_common::rviz_common
     rviz_ogre_vendor::OgreMain
-    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt6::Widgets
   )
 
   set(TEST_FIXTURE_OBJECTS $<TARGET_OBJECTS:test_fixture_objects>)
@@ -494,7 +561,7 @@ if(BUILD_TESTING)
     target_link_libraries(fps_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       ogre_testing_environment
     )
   endif()
@@ -508,7 +575,7 @@ if(BUILD_TESTING)
     target_link_libraries(frame_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       ogre_testing_environment
     )
   endif()
@@ -640,7 +707,7 @@ if(BUILD_TESTING)
     target_include_directories(orbit_view_controller_test PRIVATE test)
     target_link_libraries(orbit_view_controller_test
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       rviz_default_plugins
       ogre_testing_environment
     )
@@ -656,6 +723,27 @@ if(BUILD_TESTING)
       ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
       rviz_default_plugins
     )
+  endif()
+
+  ament_add_gmock(overlay_image_display_test
+    test/rviz_default_plugins/displays/overlay_image/overlay_image_display_test.cpp
+    ${TEST_FIXTURE_OBJECTS}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET overlay_image_display_test)
+    target_include_directories(overlay_image_display_test PRIVATE test)
+    target_link_libraries(overlay_image_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      sensor_msgs::sensor_msgs
+      rviz_default_plugins
+      ogre_testing_environment
+    )
+  endif()
+
+  ament_add_gmock(overlay_picker_tool_test
+    test/rviz_default_plugins/tools/overlay_picker/overlay_picker_tool_test.cpp)
+  if(TARGET overlay_picker_tool_test)
+    target_include_directories(overlay_picker_tool_test PRIVATE test)
+    target_link_libraries(overlay_picker_tool_test rviz_default_plugins)
   endif()
 
   ament_add_gmock(palette_builder_test
@@ -842,6 +930,19 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(tf_trajectory_display_test
+    test/rviz_default_plugins/displays/tf_trajectory/tf_trajectory_display_test.cpp
+    ${TEST_FIXTURE_OBJECTS}
+    ${SKIP_DISPLAY_TESTS})
+  if(TARGET tf_trajectory_display_test)
+    target_include_directories(tf_trajectory_display_test PRIVATE test)
+    target_link_libraries(tf_trajectory_display_test
+      ${TEST_FIXTURE_WITH_MOCK_LIBRARIES}
+      rviz_default_plugins
+      ogre_testing_environment
+    )
+  endif()
+
   ament_add_gmock(transformer_guard_test
     test/rviz_default_plugins/transformation/transformer_guard_test.cpp
     ${TEST_FIXTURE_OBJECTS}
@@ -893,7 +994,7 @@ if(BUILD_TESTING)
   add_library(point_cloud_common_page_object STATIC test/rviz_default_plugins/page_objects/point_cloud_common_page_object.cpp)
   target_link_libraries(point_cloud_common_page_object
     PRIVATE
-      Qt${QT_VERSION_MAJOR}::Test
+      Qt6::Test
       rviz_visual_testing_framework::rviz_visual_testing_framework
   )
 
@@ -1024,7 +1125,7 @@ if(BUILD_TESTING)
   add_library(marker_display_page_object STATIC test/rviz_default_plugins/page_objects/marker_display_page_object.cpp)
   target_link_libraries(marker_display_page_object
     PRIVATE
-      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt6::Widgets
       rviz_visual_testing_framework::rviz_visual_testing_framework
   )
 

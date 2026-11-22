@@ -31,10 +31,8 @@
 #ifndef RVIZ_COMMON__VALIDATE_FLOATS_HPP_
 #define RVIZ_COMMON__VALIDATE_FLOATS_HPP_
 
-#include <array>
 #include <cmath>
 #include <ranges>  // NOLINT(build/include_order) cpplint predates C++20 headers
-#include <vector>
 
 #include <OgreVector.h>
 #include <OgreQuaternion.h>

@@ -61,7 +61,7 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/node.hpp"
 #include "rclcpp/time.hpp"
-#include "rclcpp/executors/single_threaded_executor.hpp"
+#include "rclcpp/executors/events_cbg_executor/events_cbg_executor.hpp"
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 
@@ -151,7 +151,7 @@ VisualizationManager::VisualizationManager(
   window_manager_(wm),
   clock_(clock),
   private_(new VisualizationManagerPrivate),
-  executor_(std::make_shared<rclcpp::executors::SingleThreadedExecutor>()),
+  executor_(std::make_shared<rclcpp::executors::EventsCBGExecutor>(rclcpp::ExecutorOptions(), 1)),
   rviz_ros_node_(ros_node_abstraction)
 {
   // visibility_bit_allocator_ is listed after default_visibility_bit_
@@ -376,14 +376,14 @@ void VisualizationManager::onUpdate()
 
   time_update_timer_ += wall_dt;
 
-  if (time_update_timer_ > std::chrono::nanoseconds(0)) {
+  if (time_update_timer_ > std::chrono::milliseconds(100)) {
     time_update_timer_ = std::chrono::nanoseconds(0);
     updateTime();
   }
 
   frame_update_timer_ += wall_dt;
 
-  if (frame_update_timer_ > std::chrono::nanoseconds(1)) {
+  if (frame_update_timer_ > std::chrono::seconds(1)) {
     frame_update_timer_ = std::chrono::nanoseconds(0);
     updateFrames();
   }

@@ -2,6 +2,26 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+16.0.4 (2026-10-09)
+-------------------
+* Avoid repeated Ogre resizes on macOS expose events (`#1893 <https://github.com/ros2/rviz/issues/1893>`_)
+* Reduce point cloud upload overhead (`#1883 <https://github.com/ros2/rviz/issues/1883>`_)
+* Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)
+* Minor fixes (`#1864 <https://github.com/ros2/rviz/issues/1864>`_)
+* Minor cleanups (`#1848 <https://github.com/ros2/rviz/issues/1848>`_)
+* Contributors: Alejandro Hernández Cordero, John Cameron Furey, Maurice Alexander Purnawan, Tanish Jain
+
+16.0.3 (2026-09-02)
+-------------------
+* Removed Qt5 dependency (`#1847 <https://github.com/ros2/rviz/issues/1847>`_)
+* Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_)
+* Cleanup headers (`#1829 <https://github.com/ros2/rviz/issues/1829>`_)
+* Optimize ogre headers (`#1823 <https://github.com/ros2/rviz/issues/1823>`_)
+* splitStringIntoTrimmedItems Function Handling Carriage Return and Form Feed Characters (`#1709 <https://github.com/ros2/rviz/issues/1709>`_)
+* Moved implementation to cpp (`#1798 <https://github.com/ros2/rviz/issues/1798>`_)
+* Support per-vertex mesh colors in the assimp loader (`#1811 <https://github.com/ros2/rviz/issues/1811>`_)
+* Contributors: Alejandro Hernández Cordero, Iori Yanokura, Paul Erik Frivold
+
 16.0.2 (2026-07-14)
 -------------------
 * use C++ 20 in default. (`#1810 <https://github.com/ros2/rviz/issues/1810>`_)

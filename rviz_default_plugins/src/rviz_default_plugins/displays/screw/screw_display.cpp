@@ -37,6 +37,8 @@
 
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/accel_stamped.hpp>
+#include "rclcpp/time.hpp"
+
 #include <rviz_common/validate_floats.hpp>
 #include <rviz_common/logging.hpp>
 

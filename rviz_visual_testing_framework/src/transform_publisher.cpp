@@ -30,10 +30,12 @@
 #include "rviz_visual_testing_framework/transform_publisher.hpp"
 
 #include <memory>
+#include <thread>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp/clock.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/rate.hpp"
 #include "tf2_ros/static_transform_broadcaster.hpp"
 
 #include "rviz_visual_testing_framework/internal/transform_message_creator.hpp"

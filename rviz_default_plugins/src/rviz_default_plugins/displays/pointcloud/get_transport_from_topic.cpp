@@ -29,7 +29,10 @@
 
 
 #include <string>
+#include <unordered_set>
 
+#include "point_cloud_transport/point_cloud_transport.hpp"
+#include "rcutils/logging_macros.h"
 #include "rviz_default_plugins/displays/pointcloud/get_transport_from_topic.hpp"
 
 namespace rviz_default_plugins
@@ -37,12 +40,41 @@ namespace rviz_default_plugins
 namespace displays
 {
 
+namespace
+{
+const std::unordered_set<std::string> & getKnownNonRawTransports()
+{
+  static const std::unordered_set<std::string> known_transports = []() {
+      std::unordered_set<std::string> result;
+      try {
+        point_cloud_transport::PointCloudTransportLoader transport_loader;
+        for (const std::string & declared_transport : transport_loader.getDeclaredTransports()) {
+          const std::string transport =
+            declared_transport.substr(declared_transport.find_last_of('/') + 1);
+          if (transport != "raw") {
+            result.insert(transport);
+          }
+        }
+      } catch (const std::exception & e) {
+        RCUTILS_LOG_WARN_NAMED(
+          "rviz_default_plugins",
+          "Failed to discover point_cloud_transport plugins: %s", e.what());
+      } catch (...) {
+        RCUTILS_LOG_WARN_NAMED(
+          "rviz_default_plugins",
+          "Failed to discover point_cloud_transport plugins: unknown error");
+      }
+      return result;
+    }();
+  return known_transports;
+}
+}  // namespace
+
 bool isPointCloud2RawTransport(const std::string & topic)
 {
-  std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
-  return last_subtopic != "draco" && last_subtopic != "zlib" &&
-         last_subtopic != "pcl" && last_subtopic != "zstd" &&
-         last_subtopic != "cloudini";
+  const std::string last_subtopic = topic.substr(topic.find_last_of('/') + 1);
+  const auto & transports = getKnownNonRawTransports();
+  return transports.find(last_subtopic) == transports.end();
 }
 
 std::string getPointCloud2TransportFromTopic(const std::string & topic)

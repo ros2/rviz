@@ -37,6 +37,8 @@
 #include <OgreEntity.h>
 #include <OgreManualObject.h>
 
+#include "rclcpp/clock.hpp"
+
 #include "rviz_common/properties/float_property.hpp"
 
 #include "rviz_default_plugins/displays/pose_array/pose_array_display.hpp"

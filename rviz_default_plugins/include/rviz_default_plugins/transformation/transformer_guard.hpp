@@ -39,9 +39,9 @@
 
 #include "rviz_common/display.hpp"
 #include "rviz_common/display_context.hpp"
+#include "rviz_common/frame_manager_iface.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 #include "rviz_common/transformation/transformation_manager.hpp"
-#include "rviz_default_plugins/transformation/tf_wrapper.hpp"
 #include "rviz_default_plugins/visibility_control.hpp"
 
 namespace rviz_default_plugins

@@ -42,6 +42,8 @@
 
 #include "tf2_ros/transform_listener.hpp"
 
+#include "rclcpp/qos.hpp"
+
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/enum_property.hpp"
 #include "rviz_common/properties/file_picker_property.hpp"
@@ -318,7 +320,7 @@ void RobotModelDisplay::display_urdf_content()
 
   std::stringstream ss;
   for (const auto & name_link_pair : robot_->getLinks()) {
-    const std::string err = name_link_pair.second->getGeometryErrors();
+    const std::string & err = name_link_pair.second->getGeometryErrors();
     if (!err.empty()) {
       ss << "\n• for link '" << name_link_pair.first << "':\n" << err;
     }

@@ -36,7 +36,7 @@
 #include <thread>
 #include <vector>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node.hpp"
 
 struct PublisherWithFrame
 {

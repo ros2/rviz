@@ -27,41 +27,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#include "rviz_common/interaction/forwards.hpp"
+// Build-only precompiled header, not part of the public API and not
+// installed. Contents are limited to headers profiling (clang -ftime-trace)
+// showed being parsed with near-identical, non-template-instantiation cost
+// in the large majority of this package's translation units: Qt6, a few
+// expensive-to-parse standard headers, and OGRE's own prerequisite headers.
+// Deliberately excludes rviz_common/rviz_rendering headers such as
+// message_filter_display.hpp: those are template-heavy and re-instantiated
+// differently per translation unit, so a PCH can't amortize that cost.
 
-#include <cstdint>
+#ifndef RVIZ_DEFAULT_PLUGINS__PRECOMPILE_HPP_
+#define RVIZ_DEFAULT_PLUGINS__PRECOMPILE_HPP_
 
-#include <OgrePixelFormat.h>
-#include <OgreColourValue.h>
+#include <chrono>
+#include <memory>
+#include <format>  // NOLINT: cpplint is unable to handle the include order here
 
-#include "rviz_common/logging.hpp"
+#include <QCursor>  // NOLINT: cpplint is unable to handle the include order here
+#include <QIcon>  // NOLINT: cpplint is unable to handle the include order here
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
+#include <QString>  // NOLINT: cpplint is unable to handle the include order here
+#include <QVariant>  // NOLINT: cpplint is unable to handle the include order here
 
-namespace rviz_common
-{
-namespace interaction
-{
+#include <OgrePrerequisites.h>
+#include <OgreStdHeaders.h>
 
-uint32_t colorToHandle(Ogre::PixelFormat fmt, uint32_t col)
-{
-  uint32_t handle = 0;
-  if (fmt == Ogre::PF_A8R8G8B8 || fmt == Ogre::PF_X8R8G8B8) {
-    handle = col & 0x00ffffff;
-  } else if (fmt == Ogre::PF_R8G8B8A8) {
-    handle = col >> 8;
-  } else {
-    RVIZ_COMMON_LOG_DEBUG_STREAM("Incompatible pixel format [" << fmt << "]");
-  }
-
-  return handle;
-}
-
-CollObjectHandle colorToHandle(const Ogre::ColourValue & color)
-{
-  return
-    (static_cast<int>(color.r * 255) << 16) |
-    (static_cast<int>(color.g * 255) << 8) |
-    static_cast<int>(color.b * 255);
-}
-
-}  // namespace interaction
-}  // namespace rviz_common
+#endif  // RVIZ_DEFAULT_PLUGINS__PRECOMPILE_HPP_

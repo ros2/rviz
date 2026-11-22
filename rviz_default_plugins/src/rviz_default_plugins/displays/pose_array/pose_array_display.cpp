@@ -35,10 +35,13 @@
 #include <string>
 
 #include <OgreManualObject.h>
+#include <OgreSceneNode.h>
 #include <OgreMaterialManager.h>
 #include <OgreTechnique.h>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
+
+#include "rclcpp/time.hpp"
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/msg_conversions.hpp"

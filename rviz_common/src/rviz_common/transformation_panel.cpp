@@ -35,10 +35,13 @@
 #include <utility>
 #include <vector>
 
+#include <QHBoxLayout>  // NOLINT
+#include <QModelIndex>  // NOLINT
 #include <QPushButton>  // NOLINT
 #include <QString>  // NOLINT
+#include <QTreeView>  // NOLINT
 #include <QVBoxLayout>  // NOLINT
-#include <QtWidgets>  // NOLINT
+#include <QWidget>  // NOLINT
 
 #include "rviz_common/display_context.hpp"
 #include "rviz_common/properties/grouped_checkbox_property.hpp"

@@ -33,7 +33,6 @@
 #define RVIZ_COMMON__CONFIG_HPP_
 
 #include <algorithm>
-#include <cstdio>
 #include <memory>
 #include <string>
 

@@ -40,6 +40,8 @@
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>
 #include <OgreHardwarePixelBuffer.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
@@ -204,7 +206,7 @@ void CameraInfoDisplay::addPointToEdge(
 
 void CameraInfoDisplay::addPolygon(
   const Ogre::Vector3 & O, const Ogre::Vector3 & A, const Ogre::Vector3 & B,
-  std::string name, bool use_color, bool upper_triangle)
+  const std::string & name, bool use_color, bool upper_triangle)
 {
   Ogre::ColourValue color = rviz_common::properties::qtToOgre(color_);
   color.a = alpha_;

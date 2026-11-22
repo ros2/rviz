@@ -34,7 +34,6 @@
 #include <chrono>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "tf2/buffer_core_interface.hpp"
 #include "tf2/exceptions.hpp"
