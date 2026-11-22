@@ -76,6 +76,9 @@
 #include "rviz_rendering/material_manager.hpp"
 #include "rviz_rendering/render_window.hpp"
 #include "sensor_msgs/image_encodings.hpp"
+
+#include "bayer_format.hpp"
+
 namespace rviz_default_plugins
 {
 namespace displays
@@ -130,7 +133,7 @@ ImageDisplay::ImageDisplay(std::unique_ptr<ROSImageTextureIface> texture)
     "If disabled, sampling uses nearest-neighbour.",
     this, SLOT(updateSmoothScaling()));
 
-  got_float_image_ = false;
+  has_normalizable_range_ = false;
 }
 
 // Need to override this method because of the new type RosTopicMultiTypeProperty
@@ -328,7 +331,7 @@ void ImageDisplay::unsubscribe()
 
 void ImageDisplay::updateNormalizeOptions()
 {
-  if (got_float_image_) {
+  if (has_normalizable_range_) {
     bool normalize = normalize_property_->getBool();
 
     normalize_property_->setHidden(false);
@@ -409,14 +412,16 @@ void ImageDisplay::reset()
 /* This is called by incomingMessage(). */
 void ImageDisplay::processMessage(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
-  bool got_float_image =
+  const auto bayer_format = bayerFormatFromEncoding(msg->encoding);
+  const bool has_normalizable_range =
     msg->encoding == sensor_msgs::image_encodings::TYPE_32FC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16UC1 ||
     msg->encoding == sensor_msgs::image_encodings::TYPE_16SC1 ||
-    msg->encoding == sensor_msgs::image_encodings::MONO16;
+    msg->encoding == sensor_msgs::image_encodings::MONO16 ||
+    (bayer_format && bayer_format->is_16bit);
 
-  if (got_float_image != got_float_image_) {
-    got_float_image_ = got_float_image;
+  if (has_normalizable_range != has_normalizable_range_) {
+    has_normalizable_range_ = has_normalizable_range;
     updateNormalizeOptions();
   }
   last_msg_ = msg;
