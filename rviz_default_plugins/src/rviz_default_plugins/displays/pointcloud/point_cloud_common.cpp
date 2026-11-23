@@ -166,6 +166,13 @@ PointCloudCommon::PointCloudCommon(rviz_common::Display * display)
     this, SLOT(setColorTransformerOptions(rviz_common::properties::EnumProperty*)));
 }
 
+PointCloudCommon::~PointCloudCommon()
+{
+  // The transformers must be destroyed before transformer_factory_, whose class loader
+  // may unload the plugin library that contains their code.
+  transformers_.clear();
+}
+
 void PointCloudCommon::initialize(
   rviz_common::DisplayContext * context,
   Ogre::SceneNode * scene_node)
