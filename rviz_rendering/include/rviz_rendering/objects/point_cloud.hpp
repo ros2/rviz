@@ -64,6 +64,18 @@ namespace rviz_rendering
 {
 
 /**
+ * \brief Load a point cloud material, keeping its geometry shader (gp) techniques only if
+ * all of them can be used.
+ *
+ * Ogre picks the technique of each scheme (default, Depth, Pick, Pick1) on its own, but they
+ * all draw the same vertex buffer, laid out for either the gp or the nogp techniques. So the
+ * gp techniques are removed if glsl_version is below 150 (before they are compiled), or if
+ * any of them is not supported.
+ */
+RVIZ_RENDERING_PUBLIC
+void loadPointCloudMaterial(const Ogre::MaterialPtr & material, int glsl_version);
+
+/**
  * \class PointCloud
  * \brief A visual representation of a set of points.
  *
