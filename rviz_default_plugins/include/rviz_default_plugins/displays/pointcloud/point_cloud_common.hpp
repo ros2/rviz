@@ -140,6 +140,8 @@ public:
 
   explicit PointCloudCommon(rviz_common::Display * display);
 
+  ~PointCloudCommon() override;
+
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
 
   void reset();
