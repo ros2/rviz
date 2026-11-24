@@ -2,8 +2,8 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+17.0.0 (2026-11-24)
+-------------------
 * Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
 * Destroy point cloud transformers before their factory (`#1912 <https://github.com/ros2/rviz/issues/1912>`_)
 * Read signed point cloud fields as signed values (`#1910 <https://github.com/ros2/rviz/issues/1910>`_)

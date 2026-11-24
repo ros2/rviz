@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+17.0.0 (2026-11-24)
+-------------------
 * Do not attach point cloud renderables to the scene node (`#1902 <https://github.com/ros2/rviz/issues/1902>`_)
 * Expand point cloud billboards and boxes with geometry shaders (`#1901 <https://github.com/ros2/rviz/issues/1901>`_)
 * Support embedded meshes in MESH_RESOURCE markers (`#1900 <https://github.com/ros2/rviz/issues/1900>`_)

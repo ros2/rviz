@@ -2,8 +2,8 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+17.0.0 (2026-11-24)
+-------------------
 * Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
 * Contributors: Alejandro Hernández Cordero
 

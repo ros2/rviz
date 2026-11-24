@@ -2,8 +2,8 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+17.0.0 (2026-11-24)
+-------------------
 * Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
 * Fix use-after-free when removing displays (emit displayRemoved before beginRemove) (`#1925 <https://github.com/ros2/rviz/issues/1925>`_)
 * Fix out of bounds write in MockSelectionRenderer and add selection tests (`#1928 <https://github.com/ros2/rviz/issues/1928>`_)

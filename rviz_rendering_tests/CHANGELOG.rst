@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+17.0.0 (2026-11-24)
+-------------------
 * Support embedded meshes in MESH_RESOURCE markers (`#1900 <https://github.com/ros2/rviz/issues/1900>`_)
 * Fix index buffer overflow for meshes with more than 65535 faces and 16 bit indices (`#1914 <https://github.com/ros2/rviz/issues/1914>`_)
 * Contributors: Akhmad, LucaKro
