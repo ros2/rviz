@@ -2,6 +2,12 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix index buffer overflow for meshes with more than 65535 faces and 16 bit indices (backport `#1914 <https://github.com/ros2/rviz/issues/1914>`_) (`#1920 <https://github.com/ros2/rviz/issues/1920>`_)
+* addPoints(vector&&) overload (`#1863 <https://github.com/ros2/rviz/issues/1863>`_) (`#1924 <https://github.com/ros2/rviz/issues/1924>`_)
+* Contributors: mergify[bot]
+
 14.1.24 (2026-09-02)
 --------------------
 * Fix memory leaks related to OdometryDisplay (`#1833 <https://github.com/ros2/rviz/issues/1833>`_) (`#1840 <https://github.com/ros2/rviz/issues/1840>`_)

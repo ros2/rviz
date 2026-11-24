@@ -2,6 +2,12 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Destroy point cloud transformers before their factory (`#1912 <https://github.com/ros2/rviz/issues/1912>`_) (`#1934 <https://github.com/ros2/rviz/issues/1934>`_)
+* addPoints(vector&&) overload (`#1863 <https://github.com/ros2/rviz/issues/1863>`_) (`#1924 <https://github.com/ros2/rviz/issues/1924>`_)
+* Contributors: mergify[bot]
+
 14.1.24 (2026-09-02)
 --------------------
 * Discover point cloud transports dynamically (`#1842 <https://github.com/ros2/rviz/issues/1842>`_) (`#1846 <https://github.com/ros2/rviz/issues/1846>`_)
