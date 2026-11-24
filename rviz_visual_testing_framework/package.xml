@@ -13,9 +13,9 @@
 
   <license>BSD</license>
 
-  <url type="website">http://ros.org/wiki/rviz2</url>
-  <url type="repository">https://github.com/ros-visualization/rviz</url>
-  <url type="bugtracker">https://github.com/ros-visualization/rviz/issues</url>
+  <url type="website">https://github.com/ros2/rviz/blob/ros2/README.md</url>
+  <url type="repository">https://github.com/ros2/rviz</url>
+  <url type="bugtracker">https://github.com/ros2/rviz/issues</url>
 
   <author>Alessandro Bottero</author>
   <author email="jacob@openrobotics.org">Jacob Perron</author>

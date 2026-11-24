@@ -57,6 +57,33 @@ namespace displays
 namespace markers
 {
 
+namespace
+{
+constexpr char kEmbeddedMeshPrefix[] = "embedded://";
+
+bool isEmbeddedMesh(const std::string & mesh_resource)
+{
+  return mesh_resource.rfind(kEmbeddedMeshPrefix, 0) == 0;
+}
+
+bool sameMeshFile(
+  const visualization_msgs::msg::Marker & a, const visualization_msgs::msg::Marker & b)
+{
+  const auto & a_data = a.mesh_file.data;
+  const auto & b_data = b.mesh_file.data;
+  return a.mesh_file.filename == b.mesh_file.filename && a_data.size() == b_data.size() &&
+         (a_data.data() == b_data.data() || a_data == b_data);
+}
+}  // namespace
+
+// Messages may send the data of an embedded mesh only once and leave it empty afterwards, so the
+// data is compared with the data of the loaded mesh, not with that of the previous message.
+bool MeshResourceMarker::embeddedMeshDataChanged(const MarkerConstSharedPtr & new_message) const
+{
+  return isEmbeddedMesh(new_message->mesh_resource) && !new_message->mesh_file.data.empty() &&
+         !(embedded_mesh_message_ && sameMeshFile(*embedded_mesh_message_, *new_message));
+}
+
 MeshResourceMarker::MeshResourceMarker(
   MarkerCommon * owner, rviz_common::DisplayContext * context, Ogre::SceneNode * parent_node)
 : MarkerBase(owner, context, parent_node), entity_(nullptr)
@@ -72,6 +99,10 @@ void MeshResourceMarker::reset()
   destroyEntity();
   destroyMaterials();
   materials_.clear();
+  if (!embedded_mesh_.empty()) {
+    rviz_rendering::releaseMeshFromMemory(embedded_mesh_);
+    embedded_mesh_.clear();
+  }
 }
 
 void MeshResourceMarker::destroyEntity()
@@ -100,21 +131,59 @@ void MeshResourceMarker::onNewMessage(
 
   scene_node_->setVisible(false);
 
+  // Embedded mesh data that is invalid stays invalid, so it is not loaded (and hashed) again. The
+  // status of the marker is cleared with every message, so the error is reported again.
+  if (!entity_ && invalid_embedded_mesh_message_ &&
+    invalid_embedded_mesh_message_->mesh_resource == new_message->mesh_resource &&
+    sameMeshFile(*invalid_embedded_mesh_message_, *new_message))
+  {
+    printMeshLoadingError(new_message);
+    return;
+  }
+
   if (!entity_ ||
     old_message->mesh_resource != new_message->mesh_resource ||
-    old_message->mesh_use_embedded_materials != new_message->mesh_use_embedded_materials)
+    old_message->mesh_use_embedded_materials != new_message->mesh_use_embedded_materials ||
+    embeddedMeshDataChanged(new_message))
   {
+    // This releases an embedded mesh we used before. It stays loaded for a while, so a mesh whose
+    // data is not sent again can still be loaded below.
+    const std::string previous_embedded_mesh = embedded_mesh_;
     reset();
+
+    // "embedded://" meshes come with the message (mesh_file) instead of behind a URI.
+    Ogre::MeshPtr mesh;
+    if (isEmbeddedMesh(new_message->mesh_resource)) {
+      bool data_is_invalid = false;
+      mesh = rviz_rendering::loadMeshFromMemory(
+        new_message->mesh_resource,
+        new_message->mesh_file.filename,
+        new_message->mesh_file.data,
+        previous_embedded_mesh,
+        &data_is_invalid);
+      invalid_embedded_mesh_message_ = data_is_invalid ? new_message : nullptr;
+      if (!mesh) {
+        embedded_mesh_message_.reset();
+      } else if (!new_message->mesh_file.data.empty()) {
+        embedded_mesh_message_ = new_message;
+      } else if (mesh->getName() != previous_embedded_mesh) {
+        // Data that someone else sent, which this marker has not seen.
+        embedded_mesh_message_.reset();
+      }
+      if (mesh) {
+        embedded_mesh_ = mesh->getName();
+      }
+    } else if (!new_message->mesh_resource.empty()) {
+      mesh = rviz_rendering::loadMeshFromResource(
+        owner_->getResourceRetriever(),
+        new_message->mesh_resource);
+    }
 
     if (new_message->mesh_resource.empty()) {
       return;
     }
 
-    if (
-      !rviz_rendering::loadMeshFromResource(
-        owner_->getResourceRetriever(),
-        new_message->mesh_resource))
-    {
+    if (!mesh) {
       printMeshLoadingError(new_message);
       return;
     }
@@ -157,6 +226,9 @@ void MeshResourceMarker::printMeshLoadingError(const MarkerBase::MarkerConstShar
 {
   std::string error = "Mesh resource marker [" + getStringID() + "] could not load [" +
     new_message->mesh_resource + "]";
+  if (isEmbeddedMesh(new_message->mesh_resource) && new_message->mesh_file.data.empty()) {
+    error += ": no mesh data received";
+  }
   if (owner_) {
     owner_->setMarkerStatus(getID(), rviz_common::properties::StatusProperty::Error, error);
   }
@@ -168,7 +240,10 @@ void MeshResourceMarker::createMeshWithMaterials(
 {
   static uint32_t count = 0;
   std::string id = "mesh_resource_marker_" + std::to_string(count++);
-  entity_ = context_->getSceneManager()->createEntity(id, new_message->mesh_resource);
+  // An embedded mesh may have a different name than the resource, see loadMeshFromMemory().
+  const std::string & mesh_name =
+    embedded_mesh_.empty() ? new_message->mesh_resource : embedded_mesh_;
+  entity_ = context_->getSceneManager()->createEntity(id, mesh_name);
   scene_node_->attachObject(entity_);
 
   // create a default material for any sub-entities which don't have their own.

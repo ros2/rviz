@@ -311,7 +311,7 @@
     base_class_type="rviz_common::Display"
   >
     <description>
-      Displays visualization_msgs::Marker messages. &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker"&gt;More Information&lt;/a&gt;.
+      Displays visualization_msgs::Marker messages. &lt;a href="https://docs.ros.org/en/rolling/Developer-Tools/Visualization/RViz/Marker-Display-types/Marker-Display-types.html"&gt;More Information&lt;/a&gt;.
     </description>
     <message_type>visualization_msgs/msg/Marker</message_type>
   </class>
@@ -322,7 +322,7 @@
     base_class_type="rviz_common::Display">
       <description>
           Displays visualization_msgs::MarkerArray messages without presuming the topic name ends in "_array".
-          <a href="http://www.ros.org/wiki/rviz/DisplayTypes/Marker">More Information</a>.
+          <a href="https://docs.ros.org/en/rolling/Developer-Tools/Visualization/RViz/Marker-Display-types/Marker-Display-types.html">More Information</a>.
       </description>
       <message_type>visualization_msgs/msg/MarkerArray</message_type>
   </class>

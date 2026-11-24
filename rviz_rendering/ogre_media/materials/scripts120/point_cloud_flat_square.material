@@ -1,4 +1,46 @@
+import * from "point_cloud_gp.material"
+
 material rviz/PointCloudFlatSquare {
+  // The gp techniques use geometry shaders to expand each point on the GPU, so the
+  // vertex buffer only holds one vertex per point. Ogre skips them when geometry
+  // shaders are not supported and falls back to the nogp techniques below.
+  technique gp
+  {
+    pass gp : rviz/PointCloudGpBillboard
+    {
+      alpha_rejection greater_equal 1
+      fragment_program_ref rviz/glsl120/flat_color.frag {}
+    }
+  }
+
+  technique gp_depth
+  {
+    scheme Depth
+    pass gp_depth : rviz/PointCloudGpBillboardDepth
+    {
+      alpha_rejection greater_equal 1
+      fragment_program_ref rviz/glsl120/depth.frag {}
+    }
+  }
+
+  technique gp_selection_first_pass
+  {
+    scheme Pick
+    pass gp_selection_first_pass : rviz/PointCloudGpBillboard
+    {
+      fragment_program_ref rviz/glsl120/pickcolor.frag {}
+    }
+  }
+
+  technique gp_selection_second_pass
+  {
+    scheme Pick1
+    pass gp_selection_second_pass : rviz/PointCloudGpBillboard
+    {
+      alpha_rejection greater_equal 1
+      fragment_program_ref rviz/glsl120/pass_color.frag {}
+    }
+  }
 
   technique nogp {
     pass { 

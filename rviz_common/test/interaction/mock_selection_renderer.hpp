@@ -99,9 +99,10 @@ public:
     // each pixel everywhere, we reinterpret the data here to make the code more readable.
     auto dstptr = reinterpret_cast<uint32_t *>(dst_box.data);
     for (auto & object : objects_) {
+      // x and y are relative to the rectangle, so check them against its size
       int x = object.x - rectangle.x1;
       int y = object.y - rectangle.y1;
-      if (x < rectangle.x2 && y < rectangle.y2 && x >= 0 && y >= 0) {
+      if (x >= 0 && y >= 0 && x < static_cast<int>(width) && y < static_cast<int>(height)) {
         dstptr[y * dst_box.rowPitch + x] = object.getARGBColor();
       }
     }

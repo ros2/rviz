@@ -141,6 +141,8 @@ public:
 
   explicit PointCloudCommon(rviz_common::Display * display);
 
+  ~PointCloudCommon() override;
+
   void initialize(rviz_common::DisplayContext * context, Ogre::SceneNode * scene_node);
 
   void reset();
@@ -198,8 +200,8 @@ private:
 
   void loadTransformers();
   void loadTransformer(
-    PointCloudTransformerPtr trans,
-    std::string name,
+    const PointCloudTransformerPtr & trans,
+    const std::string & name,
     const std::string & lookup_name);
 
   float getSelectionBoxSize();
@@ -224,7 +226,7 @@ private:
   void removeObsoleteCloudInfos();
 
   bool cloudInfoIsDecayed(
-    CloudInfoPtr cloud_info, float point_decay_time, const rclcpp::Time & now);
+    const CloudInfoPtr & cloud_info, float point_decay_time, const rclcpp::Time & now);
 
   D_CloudInfo cloud_infos_;
 
