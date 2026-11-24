@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix index buffer overflow for meshes with more than 65535 faces and 16 bit indices (`#1914 <https://github.com/ros2/rviz/issues/1914>`_) (`#1919 <https://github.com/ros2/rviz/issues/1919>`_)
+* Contributors: mergify[bot]
+
 15.0.15 (2026-09-02)
 --------------------
 * Support per-vertex mesh colors in the assimp loader (`#1811 <https://github.com/ros2/rviz/issues/1811>`_) (`#1814 <https://github.com/ros2/rviz/issues/1814>`_)

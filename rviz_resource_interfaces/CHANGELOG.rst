@@ -2,6 +2,9 @@
 Changelog for package rviz_resource_interfaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 15.0.15 (2026-09-02)
 --------------------
 
