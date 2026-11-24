@@ -85,6 +85,12 @@ inline T valueFromCloud(
 
   switch (type) {
     case sensor_msgs::msg::PointField::INT8:
+      {
+        int8_t val = *reinterpret_cast<const int8_t *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
+
     case sensor_msgs::msg::PointField::UINT8:
       {
         uint8_t val = *reinterpret_cast<const uint8_t *>(data);
@@ -93,6 +99,12 @@ inline T valueFromCloud(
       }
 
     case sensor_msgs::msg::PointField::INT16:
+      {
+        int16_t val = *reinterpret_cast<const int16_t *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
+
     case sensor_msgs::msg::PointField::UINT16:
       {
         uint16_t val = *reinterpret_cast<const uint16_t *>(data);
@@ -101,6 +113,12 @@ inline T valueFromCloud(
       }
 
     case sensor_msgs::msg::PointField::INT32:
+      {
+        int32_t val = *reinterpret_cast<const int32_t *>(data);
+        ret = static_cast<T>(val);
+        break;
+      }
+
     case sensor_msgs::msg::PointField::UINT32:
       {
         uint32_t val = *reinterpret_cast<const uint32_t *>(data);

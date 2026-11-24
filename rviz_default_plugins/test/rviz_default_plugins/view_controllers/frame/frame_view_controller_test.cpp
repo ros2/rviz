@@ -181,22 +181,25 @@ TEST_F(FrameViewControllerTestFixture, reset_points_camera_along_selected_axis) 
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 
-  // Reset should align with -z axis (option 6)
+  // Reset should align with +x axis (option 1)
   frame_->reset();
 
-  checkCameraLooksAlong(Ogre::Vector3(0, 0, -1));
+  checkCameraLooksAlong(Ogre::Vector3(1, 0, 0));
 }
 
-TEST_F(FrameViewControllerTestFixture, default_axis_is_negative_z) {
-  // Test that camera initially points along -z axis (option 6)
-  EXPECT_THAT(getAxisPropertyOptionInt(), Eq(6));
+TEST_F(FrameViewControllerTestFixture, default_axis_is_positive_x) {
+  // Test that camera initially points along +x axis (option 1)
+  EXPECT_THAT(getAxisPropertyOptionInt(), Eq(1));
 
-  checkCameraLooksAlong(Ogre::Vector3(0, 0, -1));
+  frame_->reset();
+
+  checkCameraLooksAlong(Ogre::Vector3(1, 0, 0));
 }
 
 TEST_F(FrameViewControllerTestFixture, setting_axis_to_positive_x_points_camera_along_x_axis) {
   // +x axis = option 1
   setAxisPropertyOption(1);
+  frame_->reset();
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 
@@ -207,6 +210,7 @@ TEST_F(FrameViewControllerTestFixture,
   setting_axis_to_negative_x_points_camera_along_negative_x_axis) {
   // -x axis = option 2
   setAxisPropertyOption(2);
+  frame_->reset();
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 
@@ -216,6 +220,7 @@ TEST_F(FrameViewControllerTestFixture,
 TEST_F(FrameViewControllerTestFixture, setting_axis_to_positive_y_points_camera_along_y_axis) {
   // +y axis = option 3
   setAxisPropertyOption(3);
+  frame_->reset();
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 
@@ -226,6 +231,7 @@ TEST_F(FrameViewControllerTestFixture,
   setting_axis_to_negative_y_points_camera_along_negative_y_axis) {
   // -y axis = option 4
   setAxisPropertyOption(4);
+  frame_->reset();
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 
@@ -235,6 +241,7 @@ TEST_F(FrameViewControllerTestFixture,
 TEST_F(FrameViewControllerTestFixture, setting_axis_to_positive_z_points_camera_along_z_axis) {
   // +z axis = option 5
   setAxisPropertyOption(5);
+  frame_->reset();
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 
@@ -245,6 +252,7 @@ TEST_F(FrameViewControllerTestFixture,
   setting_axis_to_negative_z_points_camera_along_negative_z_axis) {
   // -z axis = option 6
   setAxisPropertyOption(6);
+  frame_->reset();
   auto zero = std::chrono::nanoseconds::zero();
   frame_->update(zero, zero);
 

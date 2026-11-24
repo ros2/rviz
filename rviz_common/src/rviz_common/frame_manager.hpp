@@ -68,8 +68,8 @@ class FrameManager : public FrameManagerIface
 public:
   /// Constructor.
   /**
-   * \param tf a pointer to tf::TransformListener (should not be used anywhere
-   *   else because of thread safety).
+   * \param clock the clock used to get the current time.
+   * \param transformer the frame transformer used to look up transforms.
    */
   FrameManager(
     rclcpp::Clock::SharedPtr clock, std::shared_ptr<transformation::FrameTransformer> transformer);
@@ -156,7 +156,7 @@ public:
   /// Clear the internal cache.
   void update() override;
 
-  /// Check to see if a frame exists in the tf::TransformListener.
+  /// Check to see if a frame exists in the frame transformer.
   /**
    * \param[in] frame The name of the frame to check.
    * \param[out] error If the frame does not exist, an error message is

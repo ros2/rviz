@@ -99,9 +99,10 @@ public:
   /**
    * Creates managers and sets up global properties.
    * \param render_panel a pointer to the main render panel widget of the app.
+   * \param ros_node_abstraction a weak pointer to the ROS node abstraction used by rviz.
    * \param wm a pointer to the window manager (which is really just a
    *   VisualizationFrame, the top-level container widget of rviz).
-   * \param tf a pointer to tf::TransformListener which will be internally used by FrameManager.
+   * \param clock the clock used by rviz.
    */
   explicit VisualizationManager(
     RenderPanel * render_panel,
@@ -325,8 +326,8 @@ protected Q_SLOTS:
    * This is the central place where update() is called on most rviz objects.
    * Display objects, the FrameManager, the current ViewController, the
    * SelectionManager, PropertyManager.
-   * Also calls ros::spinOnce(), so any callbacks on the global CallbackQueue
-   * get called from here as well.
+   * Also spins the executor, so any pending ROS callbacks get called from
+   * here as well.
    *
    * It is called at 30Hz from the update timer.
    */

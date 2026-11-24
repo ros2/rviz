@@ -105,7 +105,7 @@ bool validateFloats(const sensor_msgs::msg::CameraInfo & msg)
 }
 
 static Ogre::Vector4 calculateScreenCorners(
-  const sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info,
   const Ogre::Vector2 & zoom)
 {
   float x_corner_start, y_corner_start, x_corner_end, y_corner_end;
@@ -604,7 +604,7 @@ ImageDimensions CameraDisplay::getImageDimensions(
 }
 
 Ogre::Vector2 CameraDisplay::getZoomFromInfo(
-  sensor_msgs::msg::CameraInfo::ConstSharedPtr info, ImageDimensions dimensions) const
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info, ImageDimensions dimensions) const
 {
   Ogre::Vector2 zoom;
   zoom.x = zoom_property_->getFloat();
@@ -634,7 +634,7 @@ Ogre::Vector2 CameraDisplay::getZoomFromInfo(
 /// Add the camera's translation relative to the left camera (from P[3]);
 void CameraDisplay::translatePosition(
   Ogre::Vector3 & position,
-  sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info,
   Ogre::Quaternion orientation)
 {
   double fx = info->p[0];
@@ -651,7 +651,7 @@ void CameraDisplay::translatePosition(
 
 /// calculate the projection matrix
 Ogre::Matrix4 CameraDisplay::calculateProjectionMatrix(
-  const sensor_msgs::msg::CameraInfo::ConstSharedPtr info,
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info,
   ImageDimensions dimensions,
   const Ogre::Vector2 & zoom) const
 {

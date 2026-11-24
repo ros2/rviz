@@ -1,0 +1,27 @@
+// Passes shared by the geometry shader (gp) techniques of the point cloud materials.
+// Each gp technique only adds its fragment program and alpha rejection, which must match
+// its nogp counterpart.
+
+abstract pass rviz/PointCloudGpBillboard
+{
+  vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
+  geometry_program_ref rviz/glsl150/billboard.geom {}
+}
+
+abstract pass rviz/PointCloudGpBillboardDepth
+{
+  vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
+  geometry_program_ref rviz/glsl150/billboard.geom(with_depth) {}
+}
+
+abstract pass rviz/PointCloudGpBox
+{
+  vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
+  geometry_program_ref rviz/glsl150/box.geom {}
+}
+
+abstract pass rviz/PointCloudGpBoxDepth
+{
+  vertex_program_ref   rviz/glsl150/pass_pos_color.vert {}
+  geometry_program_ref rviz/glsl150/box.geom(with_depth) {}
+}

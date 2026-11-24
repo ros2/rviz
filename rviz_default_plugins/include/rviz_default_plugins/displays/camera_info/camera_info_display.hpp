@@ -83,8 +83,8 @@ protected:
   void addPointToEdge(
     const Ogre::Vector3 & point);
   void addPolygon(
-    const Ogre::Vector3 & O, const Ogre::Vector3 & A, const Ogre::Vector3 & B, std::string name,
-    bool use_color, bool upper_triangle);
+    const Ogre::Vector3 & O, const Ogre::Vector3 & A, const Ogre::Vector3 & B,
+    const std::string & name, bool use_color, bool upper_triangle);
   void prepareMaterial();
 
   std::vector<std::shared_ptr<rviz_rendering::TrianglePolygon>> polygons_;

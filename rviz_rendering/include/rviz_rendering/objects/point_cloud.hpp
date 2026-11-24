@@ -64,6 +64,18 @@ namespace rviz_rendering
 {
 
 /**
+ * \brief Load a point cloud material, keeping its geometry shader (gp) techniques only if
+ * all of them can be used.
+ *
+ * Ogre picks the technique of each scheme (default, Depth, Pick, Pick1) on its own, but they
+ * all draw the same vertex buffer, laid out for either the gp or the nogp techniques. So the
+ * gp techniques are removed if glsl_version is below 150 (before they are compiled), or if
+ * any of them is not supported.
+ */
+RVIZ_RENDERING_PUBLIC
+void loadPointCloudMaterial(const Ogre::MaterialPtr & material, int glsl_version);
+
+/**
  * \class PointCloud
  * \brief A visual representation of a set of points.
  *
@@ -133,6 +145,18 @@ public:
   void addPoints(
     std::vector<Point>::iterator start_iterator,
     std::vector<Point>::iterator end_iterator);
+
+  /**
+   * \brief Add points to this point cloud, taking ownership of the vector
+   *
+   * Equivalent to the iterator overload, but avoids copying the points when the caller has no
+   * further use for them.  When this cloud is still empty - the usual case, since callers clear
+   * it first - the vector's buffer is taken over as is.
+   *
+   * \param points The points to add.  Left in a valid but unspecified state.
+   */
+  RVIZ_RENDERING_PUBLIC
+  void addPoints(std::vector<Point> && points);
 
   /**
    * \brief Remove a number of points from this point cloud
@@ -326,6 +350,9 @@ private:
   RenderableInternals addPointToHardwareBuffer(
     RenderableInternals internals,
     std::vector<PointCloud::Point>::iterator point, uint32_t current_point);
+
+  /// Build the renderables for the points appended to #points_ at or after \a offset.
+  void createRenderablesForPointsFrom(size_t offset);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 
