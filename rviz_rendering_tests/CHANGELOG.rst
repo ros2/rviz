@@ -2,6 +2,11 @@
 Changelog for package rviz_rendering_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix index buffer overflow for meshes with more than 65535 faces and 16 bit indices (`#1914 <https://github.com/ros2/rviz/issues/1914>`_) (`#1918 <https://github.com/ros2/rviz/issues/1918>`_)
+* Contributors: mergify[bot]
+
 15.2.7 (2026-10-09)
 -------------------
 
