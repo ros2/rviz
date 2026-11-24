@@ -73,7 +73,7 @@ namespace rviz_rendering
  * any of them is not supported.
  */
 RVIZ_RENDERING_PUBLIC
-void loadPointCloudMaterial(const Ogre::MaterialPtr & material, int glsl_version);
+void loadPointCloudMaterial(const Ogre::MaterialPtr & material);
 
 /**
  * \class PointCloud

@@ -51,9 +51,6 @@ public:
   void setUpRenderSystem();
 
   TEST_RVIZ_RENDERING_PUBLIC
-  int getGlslVersion() const;
-
-  TEST_RVIZ_RENDERING_PUBLIC
   ~OgreTestingEnvironment();
 };
 
