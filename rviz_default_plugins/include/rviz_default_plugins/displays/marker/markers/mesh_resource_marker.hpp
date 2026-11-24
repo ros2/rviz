@@ -95,6 +95,14 @@ private:
   void cloneMaterials(const std::string & id);
   void useClonedMaterials(const std::string & id, const Ogre::MaterialPtr & default_material) const;
   void updateMaterialColor(const MarkerBase::MarkerConstSharedPtr & new_message) const;
+  bool embeddedMeshDataChanged(const MarkerConstSharedPtr & new_message) const;
+
+  /// Name of the mesh loaded from the message itself, released on reset().
+  std::string embedded_mesh_;
+  /// The message whose data embedded_mesh_ was loaded from, if known.
+  MarkerConstSharedPtr embedded_mesh_message_;
+  /// The last message whose embedded mesh data could not be loaded because of the data itself.
+  MarkerConstSharedPtr invalid_embedded_mesh_message_;
 };
 
 }  // namespace markers

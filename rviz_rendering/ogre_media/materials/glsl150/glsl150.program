@@ -1,0 +1,75 @@
+//includes
+geometry_program rviz/glsl150/include/pass_depth.geom glsl { source pass_depth.geom }
+
+//all shaders, sorted by name
+
+// Ogre's GL render system passes input_operation_type, output_operation_type and
+// max_output_vertices to glProgramParameteriEXT, defaulting to triangles and 3 vertices
+// (unknown values such as "points" also fall back to triangles),
+// so they are required. They must match the layout() qualifiers in each shader.
+
+geometry_program rviz/glsl150/billboard.geom glsl
+{
+  source billboard.geom
+  input_operation_type point_list
+  output_operation_type triangle_strip
+  max_output_vertices 4
+  default_params
+  {
+    param_named_auto worldviewproj_matrix worldviewproj_matrix
+    param_named_auto camera_pos           camera_position_object_space
+    param_named_auto size custom 0
+    param_named_auto auto_size custom     6
+  }
+}
+geometry_program rviz/glsl150/billboard.geom(with_depth) glsl
+{
+  source billboard.geom
+  attach rviz/glsl150/include/pass_depth.geom
+  input_operation_type point_list
+  output_operation_type triangle_strip
+  max_output_vertices 4
+  preprocessor_defines WITH_DEPTH=1
+  default_params
+  {
+    param_named_auto worldviewproj_matrix worldviewproj_matrix
+    param_named_auto camera_pos           camera_position_object_space
+    param_named_auto worldview_matrix     worldview_matrix
+    param_named_auto size custom 0
+    param_named_auto auto_size custom     6
+  }
+}
+
+geometry_program rviz/glsl150/box.geom glsl
+{
+  source box.geom
+  input_operation_type point_list
+  output_operation_type triangle_strip
+  max_output_vertices 24
+  default_params
+  {
+    param_named_auto worldviewproj_matrix worldviewproj_matrix
+    param_named_auto size custom 0
+    param_named_auto auto_size custom     6
+  }
+}
+geometry_program rviz/glsl150/box.geom(with_depth) glsl
+{
+  source box.geom
+  attach rviz/glsl150/include/pass_depth.geom
+  input_operation_type point_list
+  output_operation_type triangle_strip
+  max_output_vertices 24
+  preprocessor_defines WITH_DEPTH=1
+  default_params
+  {
+    param_named_auto worldviewproj_matrix worldviewproj_matrix
+    param_named_auto worldview_matrix     worldview_matrix
+    param_named_auto size custom 0
+    param_named_auto auto_size custom     6
+  }
+}
+vertex_program rviz/glsl150/pass_pos_color.vert glsl
+{
+  source pass_pos_color.vert
+}

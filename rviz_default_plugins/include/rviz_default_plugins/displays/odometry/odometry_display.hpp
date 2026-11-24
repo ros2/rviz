@@ -35,9 +35,6 @@
 #include <memory>
 
 #ifndef Q_MOC_RUN
-
-// TODO(Martin-Idel-SI): Reenable once available
-// #include <tf/message_filter.h>
 #include "nav_msgs/msg/odometry.hpp"
 #endif
 
@@ -138,7 +135,7 @@ private:
   std::unique_ptr<rviz_rendering::CovarianceVisual> createAndSetCovarianceVisual(
     const Ogre::Vector3 & position,
     const Ogre::Quaternion & orientation,
-    nav_msgs::msg::Odometry::ConstSharedPtr message);
+    const nav_msgs::msg::Odometry::ConstSharedPtr & message);
 
   void clear();
 

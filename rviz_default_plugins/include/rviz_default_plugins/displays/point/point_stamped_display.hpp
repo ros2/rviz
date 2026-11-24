@@ -37,9 +37,6 @@
 
 #include "geometry_msgs/msg/point_stamped.hpp"
 
-// TODO(Martin-Idel-SI): Add again when available
-// #include <rviz/message_filter_display.h>
-
 #include "rviz_common/message_filter_display.hpp"
 
 #include "rviz_default_plugins/visibility_control.hpp"

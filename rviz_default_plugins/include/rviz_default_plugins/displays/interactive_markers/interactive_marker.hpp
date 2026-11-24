@@ -292,17 +292,11 @@ private:
   /// Which control has popped up the menu
   std::string last_control_name_;
 
-  double heart_beat_t_;
-
   // Visual aids
 
   std::unique_ptr<rviz_rendering::Axes> axes_;
 
   InteractiveMarkerControlPtr description_control_;
-
-  std::string topic_ns_;
-
-  std::string client_id_;
 
   std::recursive_mutex mutex_;
 
