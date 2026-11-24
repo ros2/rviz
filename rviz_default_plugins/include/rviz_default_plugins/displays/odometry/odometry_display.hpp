@@ -35,9 +35,6 @@
 #include <memory>
 
 #ifndef Q_MOC_RUN
-
-// TODO(Martin-Idel-SI): Reenable once available
-// #include <tf/message_filter.h>
 #include "nav_msgs/msg/odometry.hpp"
 #endif
 

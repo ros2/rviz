@@ -75,7 +75,6 @@ InteractiveMarker::InteractiveMarker(
   pose_changed_(false),
   dragging_(false),
   pose_update_requested_(false),
-  heart_beat_t_(0),
   show_visual_aids_(false)
 {
   reference_node_ = scene_node->createChildSceneNode();
