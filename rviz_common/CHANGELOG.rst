@@ -2,6 +2,17 @@
 Changelog for package rviz_common
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
+* Fix use-after-free when removing displays (emit displayRemoved before beginRemove) (`#1925 <https://github.com/ros2/rviz/issues/1925>`_)
+* Fix out of bounds write in MockSelectionRenderer and add selection tests (`#1928 <https://github.com/ros2/rviz/issues/1928>`_)
+* Add -fpch-preprocess for GCC so ccache can cache PCH-using compiles (`#1911 <https://github.com/ros2/rviz/issues/1911>`_)
+* Fix update timer thresholds in VisualizationManager::onUpdate (`#1897 <https://github.com/ros2/rviz/issues/1897>`_)
+* Precompile common Qt6/std headers in rviz_common (`#1908 <https://github.com/ros2/rviz/issues/1908>`_)
+* Folloup imcompatible QoS (`#1894 <https://github.com/ros2/rviz/issues/1894>`_)
+* Contributors: Akhmad, Alejandro Hernández Cordero, Michael Carroll, Tony Najjar
+
 16.0.4 (2026-10-09)
 -------------------
 * Report incompatible QoS in message filter displays (`#1837 <https://github.com/ros2/rviz/issues/1837>`_)

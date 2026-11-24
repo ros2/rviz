@@ -2,6 +2,9 @@
 Changelog for package rviz_ogre_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 16.0.4 (2026-10-09)
 -------------------
 * Use the SPDX identifier Apache-2.0 in package.xml license tags (`#1876 <https://github.com/ros2/rviz/issues/1876>`_)
