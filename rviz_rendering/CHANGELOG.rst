@@ -2,8 +2,8 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+15.0.16 (2026-11-24)
+--------------------
 * addPoints(vector&&) overload (`#1863 <https://github.com/ros2/rviz/issues/1863>`_) (`#1923 <https://github.com/ros2/rviz/issues/1923>`_)
 * Fix index buffer overflow for meshes with more than 65535 faces and 16 bit indices (`#1914 <https://github.com/ros2/rviz/issues/1914>`_) (`#1919 <https://github.com/ros2/rviz/issues/1919>`_)
 * Contributors: mergify[bot]
