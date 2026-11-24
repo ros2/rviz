@@ -32,11 +32,16 @@
 
 #include <QApplication>
 
+#include <memory>
 #include <sstream>
 #include <string>
+#include <vector>
 
+#include <QObject>  // NOLINT: cpplint is unable to handle the include order here
 #include <QString>  // NOLINT: cpplint is unable to handle the include order here
 
+#include "rviz_common/properties/display_group_visibility_property.hpp"
+#include "rviz_common/properties/property_tree_model.hpp"
 #include "rviz_common/properties/vector_property.hpp"
 #include "rviz_common/properties/color_property.hpp"
 #include "rviz_common/config.hpp"
@@ -47,6 +52,42 @@
 #include "mock_display_group.hpp"
 
 using namespace rviz_common;  // NOLINT
+
+namespace
+{
+
+// Records whether the model starts inserting or removing rows while another
+// insertion or removal is still in progress.
+class NestedModelChangeDetector
+{
+public:
+  explicit NestedModelChangeDetector(QAbstractItemModel * model)
+  {
+    auto begin = [this]() {
+        if (depth_ > 0) {
+          nested_ = true;
+        }
+        depth_++;
+      };
+    auto end = [this]() {depth_--;};
+    QObject::connect(model, &QAbstractItemModel::rowsAboutToBeInserted, &context_, begin);
+    QObject::connect(model, &QAbstractItemModel::rowsInserted, &context_, end);
+    QObject::connect(model, &QAbstractItemModel::rowsAboutToBeRemoved, &context_, begin);
+    QObject::connect(model, &QAbstractItemModel::rowsRemoved, &context_, end);
+  }
+
+  bool nested() const
+  {
+    return nested_;
+  }
+
+private:
+  QObject context_;
+  int depth_ = 0;
+  bool nested_ = false;
+};
+
+}  // namespace
 
 TEST(Display, load_properties) {
   std::stringstream input(
@@ -193,4 +234,112 @@ TEST(DisplayGroup, save_properties) {
       "Enabled: false\n"
       "Name: Charles\n"
     ), out.toStdString());
+}
+
+TEST(DisplayGroup, removeAllDisplays_does_not_nest_model_changes_for_visibility_listeners) {
+  auto root = new MockDisplayGroup;
+  properties::PropertyTreeModel model(root);
+
+  auto camera = new MockDisplay;
+  root->addDisplay(camera);
+  root->addDisplay(new MockDisplay);
+  root->addDisplay(new MockDisplay);
+  // Like a Camera display, which removes its visibility row for every display
+  // removed from the group it watches.
+  new properties::DisplayGroupVisibilityProperty(
+    1, root, camera, "Visibility", true, "", camera);
+
+  NestedModelChangeDetector detector(&model);
+  root->removeAllDisplays();
+
+  EXPECT_FALSE(detector.nested());
+  EXPECT_EQ(0, root->numDisplays());
+}
+
+TEST(DisplayGroup, removeAllDisplays_deletes_nested_groups_outside_the_model_removal) {
+  auto root = new MockDisplayGroup;
+  properties::PropertyTreeModel model(root);
+
+  auto nested_group = new MockDisplayGroup;
+  root->addDisplay(nested_group);
+  nested_group->addDisplay(new MockDisplay);
+  // A property that outlives the removal and watches the nested group directly.
+  auto visibility = new properties::DisplayGroupVisibilityProperty(
+    1, nested_group, nullptr, "Visibility", true, "", root);
+  ASSERT_EQ(1, visibility->numChildren());
+
+  NestedModelChangeDetector detector(&model);
+  root->removeAllDisplays();
+
+  EXPECT_FALSE(detector.nested());
+  EXPECT_EQ(0, root->numDisplays());
+  EXPECT_EQ(0, visibility->numChildren());
+}
+
+TEST(DisplayGroup, displayRemoved_is_emitted_while_the_display_is_still_in_the_group) {
+  MockDisplayGroup group;
+  auto display = new MockDisplay;
+  group.addDisplay(display);
+
+  int num_displays_in_slot = -1;
+  QObject context;
+  QObject::connect(
+    &group, &rviz_common::DisplayGroup::displayRemoved, &context,
+    [&](rviz_common::Display * removed) {
+      EXPECT_EQ(display, removed);
+      num_displays_in_slot = group.numDisplays();
+    });
+  std::unique_ptr<rviz_common::Display> taken(group.takeDisplay(display));
+
+  EXPECT_EQ(display, taken.get());
+  EXPECT_EQ(1, num_displays_in_slot);
+  EXPECT_EQ(0, group.numDisplays());
+}
+
+TEST(DisplayGroup, takeDisplay_takes_the_right_display_when_a_listener_takes_another_one) {
+  MockDisplayGroup group;
+  auto first = new MockDisplay;
+  auto second = new MockDisplay;
+  group.addDisplay(first);
+  group.addDisplay(second);
+
+  std::unique_ptr<rviz_common::Display> taken_by_listener;
+  QObject context;
+  QObject::connect(
+    &group, &rviz_common::DisplayGroup::displayRemoved, &context,
+    [&](rviz_common::Display * removed) {
+      if (removed == second) {
+        taken_by_listener.reset(group.takeDisplay(first));
+      }
+    });
+  std::unique_ptr<rviz_common::Display> taken(group.takeDisplay(second));
+
+  EXPECT_EQ(second, taken.get());
+  EXPECT_EQ(first, taken_by_listener.get());
+  EXPECT_EQ(0, group.numDisplays());
+}
+
+TEST(DisplayGroup, removeAllDisplays_signals_each_display_once_when_a_listener_takes_one) {
+  MockDisplayGroup group;
+  auto first = new MockDisplay;
+  auto second = new MockDisplay;
+  group.addDisplay(first);
+  group.addDisplay(second);
+
+  std::unique_ptr<rviz_common::Display> taken_by_listener;
+  std::vector<rviz_common::Display *> removed_displays;
+  QObject context;
+  QObject::connect(
+    &group, &rviz_common::DisplayGroup::displayRemoved, &context,
+    [&](rviz_common::Display * removed) {
+      removed_displays.push_back(removed);
+      if (removed == second) {
+        taken_by_listener.reset(group.takeDisplay(first));
+      }
+    });
+  group.removeAllDisplays();
+
+  EXPECT_EQ((std::vector<rviz_common::Display *>{second, first}), removed_displays);
+  EXPECT_EQ(first, taken_by_listener.get());
+  EXPECT_EQ(0, group.numDisplays());
 }

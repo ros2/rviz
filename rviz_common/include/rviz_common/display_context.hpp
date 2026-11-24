@@ -54,11 +54,6 @@ namespace rclcpp
 class Clock;
 }  // namespace rclcpp
 
-// namespace tf
-// {
-// class TransformListener;
-// }
-
 namespace rviz_common
 {
 

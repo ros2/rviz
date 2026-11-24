@@ -32,8 +32,11 @@
 #ifndef RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 #define RVIZ_RENDERING__MESH_LOADER_HELPERS__ASSIMP_LOADER_HPP_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "OgreHardwareBufferManager.h"
@@ -57,13 +60,27 @@
 
 namespace rviz_rendering
 {
+
+/// The extension of \p filename, with the dot and in lower case, e.g. ".glb".
+std::string lowercaseExtension(const std::string & filename);
+
 class AssimpLoader
 {
 public:
   explicit AssimpLoader(resource_retriever::Retriever * retriever = nullptr);
-  Ogre::MeshPtr meshFromAssimpScene(const std::string & name, const aiScene * scene);
+  /// \param format_extension Extension (with dot) used instead of the one of \p name, if given.
+  Ogre::MeshPtr meshFromAssimpScene(
+    const std::string & name, const aiScene * scene, const std::string & format_extension = "");
   const aiScene * getScene(const std::string & resource_path);
+  /// Only the extension of \p filename is used, to select the parser.
+  const aiScene * getSceneFromMemory(
+    const std::string & filename, const uint8_t * data, size_t size);
   std::string getErrorMessage();
+
+  /// Materials that meshFromAssimpScene() created or reused for its mesh.
+  const std::vector<std::string> & getMaterialNames() const {return material_names_;}
+  /// Embedded textures that meshFromAssimpScene() loaded or reused for its mesh.
+  const std::vector<std::string> & getTextureNames() const {return texture_names_;}
 
 private:
   struct SubMeshInternals
@@ -102,7 +119,8 @@ private:
   };
 
   std::vector<Ogre::MaterialPtr> loadMaterials(
-    const std::string & resource_path, const aiScene * scene);
+    const std::string & resource_path, const aiScene * scene,
+    const std::string & format_extension = "");
   void setLightColorsFromAssimp(
     const std::string & resource_path,
     Ogre::MaterialPtr & mat,
@@ -142,10 +160,10 @@ private:
     auto * indices =
       static_cast<T *>(index_buffer->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 
-    for (T j = 0; j < input_mesh->mNumFaces; j++) {
+    for (uint32_t j = 0; j < input_mesh->mNumFaces; j++) {
       aiFace & face = input_mesh->mFaces[j];
-      for (T k = 0; k < face.mNumIndices; ++k) {
-        *indices++ = face.mIndices[k];
+      for (uint32_t k = 0; k < face.mNumIndices; ++k) {
+        *indices++ = static_cast<T>(face.mIndices[k]);
       }
     }
     index_buffer->unlock();
@@ -153,6 +171,9 @@ private:
 
   resource_retriever::Retriever * retriever_;
   std::unique_ptr<Assimp::Importer> importer_;
+  std::unordered_set<std::string> ignored_textures_;
+  std::vector<std::string> material_names_;
+  std::vector<std::string> texture_names_;
 };
 
 }  // namespace rviz_rendering

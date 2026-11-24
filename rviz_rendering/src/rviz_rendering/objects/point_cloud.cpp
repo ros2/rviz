@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <cassert>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include <OgreHardwareBuffer.h>
@@ -54,6 +55,7 @@
 #include "rviz_rendering/custom_parameter_indices.hpp"
 #include "rviz_rendering/logging.hpp"
 #include "rviz_rendering/material_manager.hpp"
+#include "rviz_rendering/render_system.hpp"
 
 // TODO(greimela): Add again after clearing up the module dependencies
 // #include "rviz_rendering/selection/forwards.hpp"
@@ -204,6 +206,39 @@ Ogre::MaterialPtr PointCloud::getMaterialForRenderMode(RenderMode mode)
   }
 }
 
+static bool isGeometryShaderTechnique(const Ogre::Technique * technique)
+{
+  const std::string & name = technique->getName();
+  return name == "gp" || name.rfind("gp_", 0) == 0;
+}
+
+static void removeGeometryShaderTechniques(const Ogre::MaterialPtr & material)
+{
+  for (auto i = material->getTechniques().size(); i-- > 0; ) {
+    if (isGeometryShaderTechnique(material->getTechniques()[i])) {
+      material->removeTechnique(static_cast<uint16_t>(i));
+    }
+  }
+}
+
+void loadPointCloudMaterial(const Ogre::MaterialPtr & material, int glsl_version)
+{
+  if (glsl_version < 150) {
+    removeGeometryShaderTechniques(material);
+  }
+  material->load();
+
+  const auto & techniques = material->getTechniques();
+  const bool all_gp_supported = std::all_of(
+    techniques.begin(), techniques.end(), [](const Ogre::Technique * technique) {
+      return !isGeometryShaderTechnique(technique) || technique->isSupported();
+    });
+  if (!all_gp_supported) {
+    removeGeometryShaderTechniques(material);
+    material->compile();
+  }
+}
+
 PointCloud::PointCloud()
 : point_count_(0),
   common_direction_(Ogre::Vector3::NEGATIVE_UNIT_Z),
@@ -264,9 +299,6 @@ void PointCloud::clear()
   bounding_box_.setNull();
 
   if (getParentSceneNode()) {
-    for (auto const & renderable : renderables_) {
-      getParentSceneNode()->detachObject(renderable.get());
-    }
     getParentSceneNode()->needUpdate();
   }
 
@@ -290,7 +322,7 @@ void PointCloud::regenerateAll()
 
   clear();
 
-  addPoints(points.begin(), points.end());
+  addPoints(std::move(points));
 }
 
 void PointCloud::setColorByIndex(bool set)
@@ -414,7 +446,7 @@ static Ogre::MaterialPtr getSharedMaterial(const std::string & base_name, bool a
   Ogre::MaterialPtr material = manager.getByName(name);
   if (!material) {
     material = manager.getByName(base_name)->clone(name);
-    material->load();
+    loadPointCloudMaterial(material, RenderSystem::get()->getGlslVersion());
     if (alpha_blending) {
       setAlphaBlending(material);
     } else {
@@ -468,8 +500,33 @@ void PointCloud::addPoints(
   if (stop_iterator - start_iterator <= 0) {
     return;
   }
-  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
+  const size_t offset = points_.size();
   points_.insert(points_.cend(), start_iterator, stop_iterator);
+  createRenderablesForPointsFrom(offset);
+}
+
+void PointCloud::addPoints(std::vector<Point> && points)
+{
+  if (points.empty()) {
+    return;
+  }
+  const size_t offset = points_.size();
+  if (points_.empty()) {
+    points_ = std::move(points);
+  } else {
+    points_.insert(
+      points_.cend(),
+      std::make_move_iterator(points.begin()),
+      std::make_move_iterator(points.end()));
+  }
+  createRenderablesForPointsFrom(offset);
+}
+
+void PointCloud::createRenderablesForPointsFrom(size_t offset)
+{
+  const auto start_iterator = points_.begin() + static_cast<std::ptrdiff_t>(offset);
+  const auto stop_iterator = points_.end();
+  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
 
   const float * vertices = getVertices();
   const uint32_t vertices_per_point = getVerticesPerPoint();
@@ -725,9 +782,8 @@ PointCloudRenderablePtr PointCloud::createRenderable(
   rend->setCustomParameter(RVIZ_RENDERING_PICK_COLOR_PARAMETER, pick_col);
   rend->setCustomParameter(RVIZ_RENDERING_NORMAL_PARAMETER, Ogre::Vector4(common_direction_));
   rend->setCustomParameter(RVIZ_RENDERING_UP_PARAMETER, Ogre::Vector4(common_up_vector_));
-  if (getParentSceneNode()) {
-    getParentSceneNode()->attachObject(rend.get());
-  }
+  // Not attached to the scene node: _updateRenderQueue() queues the renderables, attaching them
+  // as well would draw them twice.
   renderables_.push_back(rend);
 
   return rend;

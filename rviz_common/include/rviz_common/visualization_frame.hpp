@@ -492,7 +492,6 @@ protected:
   QActionGroup * toolbar_actions_;
   std::map<QAction *, Tool *> action_to_tool_map_;
   std::map<Tool *, QAction *> tool_to_action_map_;
-  bool show_choose_new_master_option_;
 
   QToolButton * hide_left_dock_button_;
   QToolButton * hide_right_dock_button_;
