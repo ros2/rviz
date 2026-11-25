@@ -149,11 +149,11 @@ public:
   /**
    * \brief Add points to this point cloud, taking ownership of the vector
    *
-   * Equivalent to the iterator overload.  The points are stored in a packed form, so the
-   * vector's buffer cannot be taken over; it is kept for callers that have no further use
-   * for their points.
+   * Equivalent to the iterator overload, for callers that have no further use for their points.
+   * The points are stored in a packed form, so the vector's buffer cannot be taken over; it is
+   * freed instead.
    *
-   * \param points The points to add.  Left in a valid but unspecified state.
+   * \param points The points to add.  Left empty, with its memory released.
    */
   RVIZ_RENDERING_PUBLIC
   void addPoints(std::vector<Point> && points);
@@ -290,6 +290,10 @@ private:
 
   RVIZ_RENDERING_PUBLIC
   bool changingGeometrySupportIsNecessary(const Ogre::MaterialPtr materialPtr);
+
+  /// Switch to the shared materials with or without alpha blending.
+  RVIZ_RENDERING_PUBLIC
+  void setMaterials(bool alpha_blending);
 
   RVIZ_RENDERING_PUBLIC
   PointCloudRenderablePtr createRenderable(

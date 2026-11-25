@@ -2,6 +2,15 @@
 Changelog for package rviz_rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+17.0.0 (2026-11-24)
+-------------------
+* Do not attach point cloud renderables to the scene node (`#1902 <https://github.com/ros2/rviz/issues/1902>`_)
+* Expand point cloud billboards and boxes with geometry shaders (`#1901 <https://github.com/ros2/rviz/issues/1901>`_)
+* Support embedded meshes in MESH_RESOURCE markers (`#1900 <https://github.com/ros2/rviz/issues/1900>`_)
+* addPoints(vector&&) overload (`#1863 <https://github.com/ros2/rviz/issues/1863>`_)
+* Fix index buffer overflow for meshes with more than 65535 faces and 16 bit indices (`#1914 <https://github.com/ros2/rviz/issues/1914>`_)
+* Contributors: Akhmad, Alejandro Hernández Cordero, LucaKro, taeraemon
+
 16.0.4 (2026-10-09)
 -------------------
 * Avoid repeated Ogre resizes on macOS expose events (`#1893 <https://github.com/ros2/rviz/issues/1893>`_)
