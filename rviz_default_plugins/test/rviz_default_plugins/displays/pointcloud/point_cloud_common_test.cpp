@@ -34,6 +34,8 @@
 #include <memory>
 #include <vector>
 
+#include <QCoreApplication>  // NOLINT: cpplint is unable to handle the include order here
+
 #include "rclcpp/clock.hpp"
 
 #include "rviz_common/display.hpp"
@@ -312,6 +314,48 @@ TEST_F(PointCloudCommonTestFixture, changing_color_keeps_each_decaying_cloud_sep
   }
   std::sort(xs.begin(), xs.end());
   EXPECT_THAT(xs, ElementsAre(1.0f, 2.0f, 3.0f));
+}
+
+QString pointsStatus(rviz_common::Display * display)
+{
+  // Display::setStatus() is queued.
+  QCoreApplication::sendPostedEvents();
+  auto status_list = display->childAt(0);
+  if (!status_list || !status_list->getName().startsWith("Status")) {
+    return {};
+  }
+  for (int i = 0; i < status_list->numChildren(); ++i) {
+    if (status_list->childAt(i)->getName() == "Points") {
+      return status_list->childAt(i)->getValue().toString();
+    }
+  }
+  return {};
+}
+
+TEST_F(PointCloudCommonTestFixture, status_counts_the_points_of_all_displayed_clouds) {
+  point_cloud_common_->initialize(
+    context_.get(), scene_manager_->getRootSceneNode()->createChildSceneNode());
+  mockValidTransform();
+  parent_display_->findProperty("Decay Time")->setValue(1000.0f);
+
+  const auto zero = std::chrono::nanoseconds::zero();
+  point_cloud_common_->addMessage(
+    createPointCloud2WithPoints(std::vector<rviz_default_plugins::Point>{{1, 2, 3}, {4, 5, 6}}));
+  point_cloud_common_->update(zero, zero);
+  point_cloud_common_->addMessage(
+    createPointCloud2WithPoints(
+      std::vector<rviz_default_plugins::Point>{{1, 0, 0}, {2, 0, 0}, {3, 0, 0}}));
+  point_cloud_common_->update(zero, zero);
+
+  EXPECT_THAT(pointsStatus(parent_display_.get()), Eq("Showing [5] points from [2] messages"));
+
+  // Retransforming refills the clouds from the messages.
+  parent_display_->findProperty("Color Transformer")->setValue("FlatColor");
+  point_cloud_common_->update(zero, zero);
+
+  EXPECT_THAT(pointsStatus(parent_display_.get()), Eq("Showing [5] points from [2] messages"));
+  EXPECT_THAT(
+    rviz_default_plugins::findAllPointClouds(scene_manager_->getRootSceneNode()), SizeIs(2u));
 }
 
 int main(int argc, char ** argv)

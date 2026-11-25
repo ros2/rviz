@@ -170,7 +170,7 @@ public:
 
   /// The point at \p index, counted from the oldest point; no bounds checking.
   RVIZ_RENDERING_PUBLIC
-  const Point & getPoint(uint32_t index) const {return points_[index];}
+  Point getPoint(uint32_t index) const {return points_[index];}
 
   /// The number of points in the cloud.
   RVIZ_RENDERING_PUBLIC
