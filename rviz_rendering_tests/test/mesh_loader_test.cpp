@@ -30,6 +30,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -109,8 +110,8 @@ const char kTriangleWithExternalTextureGltf[] =
 // The triangle, followed by white space. This makes large payloads that are cheap to parse.
 std::vector<uint8_t> createPaddedTriangle(size_t megabytes)
 {
-  std::vector<uint8_t> data(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1);
-  data.resize(megabytes * 1024 * 1024, ' ');
+  std::vector<uint8_t> data(megabytes * 1024 * 1024, ' ');
+  std::copy(kTriangleGltf, kTriangleGltf + sizeof(kTriangleGltf) - 1, data.begin());
   return data;
 }
 
