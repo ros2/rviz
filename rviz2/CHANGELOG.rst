@@ -2,6 +2,11 @@
 Changelog for package rviz2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+17.0.0 (2026-11-24)
+-------------------
+* Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
+* Contributors: Alejandro Hernández Cordero
+
 16.0.4 (2026-10-09)
 -------------------
 * Granular includes and include what you use (`#1854 <https://github.com/ros2/rviz/issues/1854>`_)

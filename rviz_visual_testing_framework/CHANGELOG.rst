@@ -2,6 +2,11 @@
 Changelog for package rviz_visual_testing_framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+17.0.0 (2026-11-24)
+-------------------
+* Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
+* Contributors: Alejandro Hernández Cordero
+
 16.0.4 (2026-10-09)
 -------------------
 * Remove old CMake export calls (`#1889 <https://github.com/ros2/rviz/issues/1889>`_)

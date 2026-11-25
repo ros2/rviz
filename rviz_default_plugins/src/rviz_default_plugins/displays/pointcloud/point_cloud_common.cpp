@@ -455,10 +455,9 @@ void PointCloudCommon::insertNewClouds(float point_decay_time, const rclcpp::Tim
       cloud_info->cloud_.reset(new rviz_rendering::PointCloud());
       cloud_info->cloud_->setRenderMode(mode);
       cloud_info->cloud_->setLevelOfDetail(screen_density_property_->getFloat() > 0.0f);
-      cloud_info->cloud_->addPoints(
-        cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
-      // The cloud keeps its own copy of the points.
-      V_PointCloudPoint().swap(cloud_info->transformed_points_);
+      // The cloud takes over the points, so they are not kept twice.
+      cloud_info->cloud_->addPoints(std::move(cloud_info->transformed_points_));
+      cloud_info->transformed_points_.clear();
       cloud_info->cloud_->setAlpha(alpha_property_->getFloat(), per_point_alpha);
       cloud_info->cloud_->setDimensions(size, size, size);
       cloud_info->cloud_->setAutoSize(auto_size_);
@@ -703,9 +702,8 @@ void PointCloudCommon::retransform()
   for (auto const & cloud_info : cloud_infos_) {
     transformCloud(cloud_info, false);
     cloud_info->cloud_->clearAndRemoveAllPoints();
-    cloud_info->cloud_->addPoints(
-      cloud_info->transformed_points_.begin(), cloud_info->transformed_points_.end());
-    V_PointCloudPoint().swap(cloud_info->transformed_points_);
+    cloud_info->cloud_->addPoints(std::move(cloud_info->transformed_points_));
+    cloud_info->transformed_points_.clear();
   }
 }
 

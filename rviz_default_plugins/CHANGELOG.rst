@@ -2,6 +2,20 @@
 Changelog for package rviz_default_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+17.0.0 (2026-11-24)
+-------------------
+* Remove ROS 1 leftovers (`#1930 <https://github.com/ros2/rviz/issues/1930>`_)
+* Destroy point cloud transformers before their factory (`#1912 <https://github.com/ros2/rviz/issues/1912>`_)
+* Read signed point cloud fields as signed values (`#1910 <https://github.com/ros2/rviz/issues/1910>`_)
+* Support embedded meshes in MESH_RESOURCE markers (`#1900 <https://github.com/ros2/rviz/issues/1900>`_)
+* addPoints(vector&&) overload (`#1863 <https://github.com/ros2/rviz/issues/1863>`_)
+* const ref params and std::move (`#1862 <https://github.com/ros2/rviz/issues/1862>`_)
+* Fix FrameView/FrameAligned Controller to track orientation of the frame (`#1653 <https://github.com/ros2/rviz/issues/1653>`_)
+* Add -fpch-preprocess for GCC so ccache can cache PCH-using compiles (`#1911 <https://github.com/ros2/rviz/issues/1911>`_)
+* Precompile common Qt6/OGRE/std headers in rviz_default_plugins (`#1907 <https://github.com/ros2/rviz/issues/1907>`_)
+* Remove warning in overlay_camera_display (`#1895 <https://github.com/ros2/rviz/issues/1895>`_)
+* Contributors: Akhmad, Alejandro Hernández Cordero, Johannes Waibel, Matthijs van der Burgh, Michael Carroll, Rahul Seervi
+
 16.0.4 (2026-10-09)
 -------------------
 * Add OverlayImage and OverlayCamera displays and an OverlayPicker tool (`#1830 <https://github.com/ros2/rviz/issues/1830>`_)
