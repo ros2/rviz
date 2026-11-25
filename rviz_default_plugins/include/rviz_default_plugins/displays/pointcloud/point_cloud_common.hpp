@@ -114,6 +114,7 @@ struct RVIZ_DEFAULT_PLUGINS_POINTCLOUD_PUBLIC CloudInfo
   std::shared_ptr<rviz_rendering::PointCloud> cloud_;
   PointCloudSelectionHandlerPtr selection_handler_;
 
+  /// Points of message_ while they are being transformed; empty once they are in cloud_.
   std::vector<rviz_rendering::PointCloud::Point> transformed_points_;
 
   Ogre::Quaternion orientation_;

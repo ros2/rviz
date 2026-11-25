@@ -179,7 +179,7 @@ void PointCloudSelectionHandler::onSelect(const rviz_common::interaction::Picked
   for (auto handle : obj.extra_handles) {
     uint64_t index = handleToIndex(handle);
 
-    Ogre::Vector3 pos = cloud_info_->transformed_points_[index].position;
+    Ogre::Vector3 pos = cloud_info_->cloud_->getPoint(static_cast<uint32_t>(index)).position;
     pos = cloud_info_->scene_node_->convertLocalToWorldPosition(pos);
 
     float size = box_size_ * 0.5f;
@@ -215,7 +215,7 @@ void PointCloudSelectionHandler::addPositionProperty(
   rviz_common::properties::VectorProperty * pos_prop =
     new rviz_common::properties::VectorProperty(
     "Position",
-    cloud_info_->transformed_points_[index].position,
+    cloud_info_->cloud_->getPoint(static_cast<uint32_t>(index)).position,
     "",
     parent);
   pos_prop->setReadOnly(true);
