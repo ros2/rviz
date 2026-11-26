@@ -122,6 +122,32 @@ TEST_F(RosImageTextureTestFixture, update_writes_new_image_to_the_texture) {
 #endif  // OGRE_MIN_VERSION(13, 4, 3)
 }
 
+TEST_F(RosImageTextureTestFixture, update_rejects_passthrough_image_smaller_than_its_dimensions) {
+  auto msg = std::make_shared<sensor_msgs::msg::Image>();
+  msg->width = 64;
+  msg->height = 64;
+  msg->encoding = sensor_msgs::image_encodings::RGB8;
+  msg->step = 64 * 3;
+  msg->data.resize(12);
+
+  ROSImageTexture texture;
+  texture.addMessage(msg);
+  EXPECT_FALSE(texture.update());
+}
+
+TEST_F(RosImageTextureTestFixture, update_rejects_converted_image_smaller_than_its_dimensions) {
+  auto msg = std::make_shared<sensor_msgs::msg::Image>();
+  msg->width = 64;
+  msg->height = 64;
+  msg->encoding = sensor_msgs::image_encodings::TYPE_32FC1;
+  msg->step = 64 * 4;
+  msg->data.resize(16);
+
+  ROSImageTexture texture;
+  texture.addMessage(msg);
+  EXPECT_FALSE(texture.update());
+}
+
 TEST_F(RosImageTextureTestFixture, destructor_removes_the_texture_from_the_manager) {
   // Each ROSImageTexture instance creates a uniquely-named Ogre texture; if
   // the destructor failed to remove it, repeatedly allocating displays in a
