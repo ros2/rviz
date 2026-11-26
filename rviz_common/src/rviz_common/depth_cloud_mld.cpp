@@ -92,6 +92,22 @@ struct RGBA
   uint8_t alpha;
 };
 
+namespace
+{
+void validateImageData(
+  const sensor_msgs::msg::Image::ConstSharedPtr & msg,
+  size_t bytes_per_pixel,
+  const char * image_name)
+{
+  if (msg->data.size() / bytes_per_pixel < static_cast<uint64_t>(msg->width) * msg->height) {
+    throw MultiLayerDepthException(
+            std::string(image_name) + " image data size (" + std::to_string(msg->data.size()) +
+            " bytes) is too small for its resolution (" + std::to_string(msg->width) + "x" +
+            std::to_string(msg->height) + ")");
+  }
+}
+}  // namespace
+
 void MultiLayerDepth::setShadowTimeOut(double time_out)
 {
   this->shadow_time_out_ = time_out;
@@ -203,6 +219,8 @@ MultiLayerDepth::generatePointCloudSL(
   const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
   std::vector<uint32_t> & rgba_color_raw)
 {
+  validateImageData(depth_msg, sizeof(T), "Depth");
+
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg = initPointCloud();
   cloud_msg->data.resize(depth_msg->height * depth_msg->width * cloud_msg->point_step);
 
@@ -280,6 +298,8 @@ MultiLayerDepth::generatePointCloudML(
   std::vector<uint32_t> & rgba_color_raw,
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
+  validateImageData(depth_msg, sizeof(T), "Depth");
+
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg = initPointCloud();
   cloud_msg->data.resize(depth_msg->height * depth_msg->width * cloud_msg->point_step * 2);
 
@@ -414,6 +434,8 @@ void MultiLayerDepth::convertColor(
 
   // query image properties
   int num_channels = sensor_msgs::image_encodings::numChannels(color_msg->encoding);
+
+  validateImageData(color_msg, static_cast<size_t>(num_channels) * sizeof(T), "Color");
 
   bool rgb_encoding = false;
   if (color_msg->encoding.find("rgb") != std::string::npos) {
