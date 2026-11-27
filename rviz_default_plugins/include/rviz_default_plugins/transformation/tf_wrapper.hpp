@@ -31,6 +31,7 @@
 #ifndef RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_WRAPPER_HPP_
 #define RVIZ_DEFAULT_PLUGINS__TRANSFORMATION__TF_WRAPPER_HPP_
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
@@ -145,8 +146,18 @@ public:
     bool using_dedicated_thread);
 
 private:
+  void createBuffer(rclcpp::Node & node);
+  void createTransformListener();
+
   std::shared_ptr<tf2_ros::Buffer> buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+
+  // Everything needed to re-create buffer_ and tf_listener_ in clear()
+  rclcpp::Clock::SharedPtr clock_;
+  std::weak_ptr<rclcpp::Node> node_;
+  rviz_common::ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node_;
+  std::chrono::milliseconds cache_time_;
+  bool using_dedicated_thread_;
 };
 
 }  // namespace transformation
