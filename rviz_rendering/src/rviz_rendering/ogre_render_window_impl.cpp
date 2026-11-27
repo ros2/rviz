@@ -113,6 +113,14 @@ RenderWindowImpl::render()
 }
 
 void
+RenderWindowImpl::setActive(bool active)
+{
+  if (ogre_render_window_) {
+    ogre_render_window_->setActive(active);
+  }
+}
+
+void
 RenderWindowImpl::renderLater()
 {
   parent_->requestUpdate();

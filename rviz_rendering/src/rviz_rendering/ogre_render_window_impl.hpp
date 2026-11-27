@@ -72,6 +72,10 @@ public:
 
   virtual ~RenderWindowImpl();
 
+  /// Control participation in Ogre::Root's global rendering pass.
+  void
+  setActive(bool active);
+
   void
   screenShot(Ogre::String imageName);
 
