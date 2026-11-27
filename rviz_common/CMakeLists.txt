@@ -401,6 +401,15 @@ if(BUILD_TESTING)
     )
   endif()
 
+  ament_add_gmock(depth_cloud_mld_test
+    test/depth_cloud_mld_test.cpp
+  )
+  if(TARGET depth_cloud_mld_test)
+    target_link_libraries(depth_cloud_mld_test
+      rviz_common
+    )
+  endif()
+
   # Consolidate interaction tests
   ament_add_gmock(rviz_common_interaction_tests
     test/interaction/selection_manager_test.cpp
