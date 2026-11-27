@@ -29,6 +29,7 @@
 
 #include <gmock/gmock.h>
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -54,6 +55,50 @@ TEST(RGB8PCTransformer, transform_returns_points_colored_in_their_rgb_color) {
   ASSERT_THAT(points_out, SizeIs(2));
   ASSERT_THAT(points_out[0].color, Eq(Ogre::ColourValue(0, 1, 0)));
   ASSERT_THAT(points_out[1].color, Eq(Ogre::ColourValue(1, 0, 1)));
+}
+
+TEST(RGB8PCTransformer, transform_rejects_rgb_field_that_does_not_fit_in_a_point) {
+  ColoredPoint p1 = {0, 0, 0, 0, 1, 0};
+  ColoredPoint p2 = {0, 0, 0, 1, 0, 1};
+  auto cloud = std::make_shared<sensor_msgs::msg::PointCloud2>(
+    *create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2}));
+
+  RGB8PCTransformer transformer;
+  for (const uint32_t offset : {cloud->point_step - 3, cloud->point_step, 0xFFFF0000u}) {
+    cloud->fields[3].offset = offset;
+    V_PointCloudPoint points_out;
+    points_out.resize(2);
+
+    EXPECT_FALSE(
+      transformer.transform(
+        cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out));
+    EXPECT_THAT(points_out[1].color, Eq(Ogre::ColourValue::White));
+  }
+}
+
+TEST(RGB8PCTransformer, transform_rejects_cloud_with_fewer_points_than_requested) {
+  ColoredPoint p1 = {0, 0, 0, 0, 1, 0};
+  ColoredPoint p2 = {0, 0, 0, 1, 0, 1};
+  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{p1, p2});
+
+  V_PointCloudPoint points_out;
+  points_out.resize(3);
+
+  RGB8PCTransformer transformer;
+  EXPECT_FALSE(
+    transformer.transform(
+      cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out));
+}
+
+TEST(RGB8PCTransformer, transform_succeeds_for_cloud_without_points) {
+  auto cloud = create8BitColoredPointCloud2(std::vector<ColoredPoint>{});
+
+  V_PointCloudPoint points_out;
+
+  RGB8PCTransformer transformer;
+  EXPECT_TRUE(
+    transformer.transform(
+      cloud, PointCloudTransformer::Support_Color, Ogre::Matrix4::ZERO, points_out));
 }
 
 TEST(RGBF32PCTransformer, supports_returns_color_support_for_cloud_with_rgb_field) {
