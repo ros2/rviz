@@ -317,8 +317,8 @@ void PointCloud::regenerateAll()
     return;
   }
 
-  V_Point points;
-  points.swap(points_);
+  V_Point points = getPoints();
+  points_.clear();
 
   clear();
 
@@ -488,7 +488,7 @@ void PointCloud::setAlpha(float alpha, bool per_point_alpha)
 void PointCloud::setColor(const Ogre::ColourValue & color)
 {
   for (auto & point : points_) {
-    point.setColor(color.r, color.g, color.b, color.a);
+    point.color = color.getAsRGBA();
   }
   regenerateAll();
 }
@@ -500,32 +500,26 @@ void PointCloud::addPoints(
   if (stop_iterator - start_iterator <= 0) {
     return;
   }
-  const size_t offset = points_.size();
-  points_.insert(points_.cend(), start_iterator, stop_iterator);
-  createRenderablesForPointsFrom(offset);
+  auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
+  points_.reserve(points_.size() + num_points);
+  for (auto point = start_iterator; point != stop_iterator; ++point) {
+    points_.push_back({point->position, point->color.getAsRGBA()});
+  }
+  createRenderablesForPoints(start_iterator, stop_iterator);
 }
 
 void PointCloud::addPoints(std::vector<Point> && points)
 {
-  if (points.empty()) {
-    return;
-  }
-  const size_t offset = points_.size();
-  if (points_.empty()) {
-    points_ = std::move(points);
-  } else {
-    points_.insert(
-      points_.cend(),
-      std::make_move_iterator(points.begin()),
-      std::make_move_iterator(points.end()));
-  }
-  createRenderablesForPointsFrom(offset);
+  addPoints(points.begin(), points.end());
+  // The points are stored packed, so the buffer cannot be taken over; free it instead, as callers
+  // rely on the move to release their copy.
+  std::vector<Point>().swap(points);
 }
 
-void PointCloud::createRenderablesForPointsFrom(size_t offset)
+void PointCloud::createRenderablesForPoints(
+  std::vector<Point>::iterator start_iterator,
+  std::vector<Point>::iterator stop_iterator)
 {
-  const auto start_iterator = points_.begin() + static_cast<std::ptrdiff_t>(offset);
-  const auto stop_iterator = points_.end();
   auto num_points = static_cast<uint32_t>(std::distance(start_iterator, stop_iterator));
 
   const float * vertices = getVertices();
@@ -700,7 +694,19 @@ void PointCloud::popPoints(uint32_t num_points)
 
 std::vector<PointCloud::Point> PointCloud::getPoints()
 {
-  return points_;
+  V_Point points(points_.size());
+  for (size_t i = 0; i < points_.size(); ++i) {
+    points[i] = getPoint(static_cast<uint32_t>(i));
+  }
+  return points;
+}
+
+PointCloud::Point PointCloud::getPoint(uint32_t index) const
+{
+  Point point;
+  point.position = points_[index].position;
+  point.color.setAsRGBA(points_[index].color);
+  return point;
 }
 
 size_t PointCloud::removePointsFromRenderables(
@@ -731,8 +737,7 @@ void PointCloud::resetBoundingBoxForCurrentPoints()
 {
   bounding_box_.setNull();
   for (uint32_t i = 0; i < point_count_; ++i) {
-    Point & p = points_[i];
-    bounding_box_.merge(p.position);
+    bounding_box_.merge(points_[i].position);
   }
 }
 

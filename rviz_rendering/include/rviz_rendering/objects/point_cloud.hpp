@@ -149,11 +149,11 @@ public:
   /**
    * \brief Add points to this point cloud, taking ownership of the vector
    *
-   * Equivalent to the iterator overload, but avoids copying the points when the caller has no
-   * further use for them.  When this cloud is still empty - the usual case, since callers clear
-   * it first - the vector's buffer is taken over as is.
+   * Equivalent to the iterator overload, for callers that have no further use for their points.
+   * The points are stored in a packed form, so the vector's buffer cannot be taken over; it is
+   * freed instead.
    *
-   * \param points The points to add.  Left in a valid but unspecified state.
+   * \param points The points to add.  Left empty, with its memory released.
    */
   RVIZ_RENDERING_PUBLIC
   void addPoints(std::vector<Point> && points);
@@ -165,12 +165,14 @@ public:
   RVIZ_RENDERING_PUBLIC
   void popPoints(uint32_t num_points);
 
+  /// A copy of all points, oldest first. Colours have the 8 bit precision of the hardware buffers.
   RVIZ_RENDERING_PUBLIC
   std::vector<Point> getPoints();
 
   /// The point at \p index, counted from the oldest point; no bounds checking.
+  /// The colour has the 8 bit precision of the hardware buffers.
   RVIZ_RENDERING_PUBLIC
-  Point getPoint(uint32_t index) const {return points_[index];}
+  Point getPoint(uint32_t index) const;
 
   /// The number of points in the cloud.
   RVIZ_RENDERING_PUBLIC
@@ -334,14 +336,23 @@ private:
     RenderableInternals internals,
     std::vector<PointCloud::Point>::iterator point, uint32_t current_point);
 
-  /// Build the renderables for the points appended to #points_ at or after \a offset.
-  void createRenderablesForPointsFrom(size_t offset);
+  /// Build the renderables for the given points, which were just appended to #points_.
+  void createRenderablesForPoints(
+    std::vector<Point>::iterator start_iterator,
+    std::vector<Point>::iterator stop_iterator);
 
   Ogre::AxisAlignedBox bounding_box_;       ///< The bounding box of this point cloud
 
   typedef std::vector<Point> V_Point;
+
+  /// A point as kept to rebuild the hardware buffers; the colour is stored like in the buffers.
+  struct StoredPoint
+  {
+    Ogre::Vector3 position;
+    Ogre::RGBA color;
+  };
   ///< The list of points we're displaying. Allocates to a high-water-mark.
-  V_Point points_;
+  std::vector<StoredPoint> points_;
   uint32_t point_count_;                    ///< The number of points currently in #points_
 
   RenderMode render_mode_;
