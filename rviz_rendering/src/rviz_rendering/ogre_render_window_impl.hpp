@@ -87,8 +87,9 @@ public:
   void
   renderNow();
 
+  /// Update the render target size, optionally refreshing an unchanged backing surface.
   void
-  resize(size_t width, size_t height);
+  resize(size_t width, size_t height, bool force = false);
 
   using setupSceneCallback = std::function<void (Ogre::SceneNode *)>;
   void
