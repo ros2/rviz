@@ -87,25 +87,7 @@ public:
   void
   prepareOverlays(Ogre::SceneManager * scene_manager);
 
-  /// return OpenGl Version as integer, e.g. 320 for OpenGl 3.20
-  int
-  getGlVersion();
-
-  /// return GLSL Version as integer, e.g. 150 for GLSL 1.50
-  int
-  getGlslVersion();
-
-  /// Disables the use of Anti Aliasing
-  static
-  void
-  disableAntiAliasing();
-
-  /// Force to use the provided OpenGL version on startup
-  static
-  void
-  forceGlVersion(int version);
-
-  /// Disable stereo rendering even if supported in HW.
+    /// Disable stereo rendering even if supported in HW.
   static
   void
   forceNoStereo();

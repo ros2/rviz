@@ -221,11 +221,8 @@ static void removeGeometryShaderTechniques(const Ogre::MaterialPtr & material)
   }
 }
 
-void loadPointCloudMaterial(const Ogre::MaterialPtr & material, int glsl_version)
+void loadPointCloudMaterial(const Ogre::MaterialPtr & material)
 {
-  if (glsl_version < 150) {
-    removeGeometryShaderTechniques(material);
-  }
   material->load();
 
   const auto & techniques = material->getTechniques();
@@ -446,7 +443,7 @@ static Ogre::MaterialPtr getSharedMaterial(const std::string & base_name, bool a
   Ogre::MaterialPtr material = manager.getByName(name);
   if (!material) {
     material = manager.getByName(base_name)->clone(name);
-    loadPointCloudMaterial(material, RenderSystem::get()->getGlslVersion());
+    loadPointCloudMaterial(material);
     if (alpha_blending) {
       setAlphaBlending(material);
     } else {

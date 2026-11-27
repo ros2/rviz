@@ -480,7 +480,7 @@ TEST_F(PointCloudTestFixture, loadPointCloudMaterial_removes_gp_techniques_below
     SCOPED_TRACE(material_name);
     auto material = cloneMaterial(material_name);
 
-    rviz_rendering::loadPointCloudMaterial(material, 140);
+    rviz_rendering::loadPointCloudMaterial(material);
 
     EXPECT_FALSE(hasGeometryShaderTechnique(material));
     ASSERT_TRUE(material->getBestTechnique());
@@ -497,7 +497,7 @@ TEST_F(
   auto material = cloneMaterial("rviz/PointCloudSphere");
   material->getTechnique("gp_depth")->getPass(0)->setFragmentProgram("rviz/test/broken.frag");
 
-  rviz_rendering::loadPointCloudMaterial(material, 460);
+  rviz_rendering::loadPointCloudMaterial(material);
 
   EXPECT_FALSE(hasGeometryShaderTechnique(material));
   ASSERT_TRUE(material->getBestTechnique());
@@ -512,7 +512,7 @@ TEST_F(PointCloudTestFixture, loadPointCloudMaterial_keeps_gp_techniques_the_dri
     SCOPED_TRACE(material_name);
     auto material = cloneMaterial(material_name);
 
-    rviz_rendering::loadPointCloudMaterial(material, 150);
+    rviz_rendering::loadPointCloudMaterial(material);
 
     for (const auto * technique : material->getTechniques()) {
       EXPECT_TRUE(technique->isSupported()) << technique->getName();

@@ -57,7 +57,6 @@ namespace rviz_rendering
 {
 
 RenderSystem * RenderSystem::instance_ = nullptr;
-int RenderSystem::force_gl_version_ = 0;
 bool RenderSystem::force_no_stereo_ = false;
 
 // Disable anti aliasing on Windows for now,
@@ -118,31 +117,6 @@ RenderSystem::~RenderSystem()
   this->Destroy();
 }
 
-int
-RenderSystem::getGlVersion()
-{
-  return gl_version_;
-}
-
-int
-RenderSystem::getGlslVersion()
-{
-  return glsl_version_;
-}
-
-void
-RenderSystem::forceGlVersion(int version)
-{
-  force_gl_version_ = version;
-  RVIZ_RENDERING_LOG_INFO_STREAM("Forcing OpenGl version " << version / 100.0 << ".");
-}
-
-void
-RenderSystem::disableAntiAliasing()
-{
-  use_anti_aliasing_ = false;
-  RVIZ_RENDERING_LOG_INFO("Disabling Anti-Aliasing");
-}
 
 bool
 RenderSystem::isStereoSupported()
@@ -172,7 +146,6 @@ RenderSystem::RenderSystem()
   setupRenderSystem();
   ogre_root_->initialise(false);
   makeRenderWindow(dummy_window_id_, 1, 1);
-  detectGlVersion();
   setupResources();
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
@@ -234,49 +207,6 @@ RenderSystem::loadOgrePlugins()
   ogre_root_->loadPlugin((plugin_prefix / "Codec_STBI").string());
 }
 
-void
-RenderSystem::detectGlVersion()
-{
-  if (force_gl_version_) {
-    gl_version_ = force_gl_version_;
-  } else {
-    Ogre::RenderSystem * renderSys = ogre_root_->getRenderSystem();
-    // createRenderSystemCapabilities() called for side effects only
-    std::unique_ptr<Ogre::RenderSystemCapabilities>(renderSys->createRenderSystemCapabilities());
-    const Ogre::RenderSystemCapabilities * caps = renderSys->getCapabilities();
-    int major = caps->getDriverVersion().major;
-    int minor = caps->getDriverVersion().minor;
-    gl_version_ = major * 100 + minor * 10;
-  }
-
-  switch (gl_version_) {
-    case 200:
-      glsl_version_ = 110;
-      break;
-    case 210:
-      glsl_version_ = 120;
-      break;
-    case 300:
-      glsl_version_ = 130;
-      break;
-    case 310:
-      glsl_version_ = 140;
-      break;
-    case 320:
-      glsl_version_ = 150;
-      break;
-    default:
-      if (gl_version_ > 320) {
-        glsl_version_ = gl_version_;
-      } else {
-        glsl_version_ = 0;
-      }
-      break;
-  }
-  RVIZ_RENDERING_LOG_INFO_STREAM(
-    "OpenGl version: " << gl_version_ / 100.0 << " (GLSL " << glsl_version_ / 100.0 << ")"
-  );
-}
 
 void
 RenderSystem::setupRenderSystem()
@@ -374,17 +304,9 @@ RenderSystem::setupResources()
   // Unfortunately, Ogre doesn't have a notion of glsl versions so we can't go
   // the 'official' way of defining multiple schemes per material and let Ogre
   // decide which one to use.
-  if (getGlslVersion() >= 120) {
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
       rviz_path + "/ogre_media/materials/scripts120", "FileSystem", "rviz_rendering");
-  } else {
-    std::string s =
-      "Your graphics driver does not support OpenGL 2.1. "
-      "Please enable software rendering before running RViz "
-      "(e.g. type 'export LIBGL_ALWAYS_SOFTWARE=1').";
-    RVIZ_RENDERING_LOG_ERROR(s);
-    throw std::runtime_error(s);
-  }
+
 
   addAdditionalResourcesFromAmentIndex();
   MaterialManager::createDefaultMaterials();
