@@ -55,9 +55,6 @@
 #include "rclcpp/clock.hpp"
 #include "rclcpp/time.hpp"
 
-// TODO(wjwwood): reenable this when message_filters is ported.
-// #include "tf2_ros/message_filter.h"
-
 #include "rviz_common/visibility_control.hpp"
 #include "rviz_common/transformation/frame_transformer.hpp"
 
