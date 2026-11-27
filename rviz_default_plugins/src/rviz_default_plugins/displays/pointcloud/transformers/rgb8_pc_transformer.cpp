@@ -72,8 +72,20 @@ bool RGB8PCTransformer::transform(
   const int32_t index = std::max(rgb, rgba);
 
   const uint32_t off = cloud->fields[index].offset;
-  uint8_t const * rgb_ptr = &cloud->data.front() + off;
   const uint32_t point_step = cloud->point_step;
+
+  if (points_out.empty()) {
+    return true;
+  }
+
+  const uint64_t colors_end =
+    static_cast<uint64_t>(off) +
+    static_cast<uint64_t>(point_step) * (points_out.size() - 1) + sizeof(uint32_t);
+  if (colors_end > cloud->data.size()) {
+    return false;
+  }
+
+  uint8_t const * rgb_ptr = &cloud->data.front() + off;
 
   // Create a look-up table for colors
   constexpr static std::array<float, 256> rgb_lut = [](){
