@@ -155,7 +155,7 @@ private:
   rviz_common::properties::FloatProperty * max_property_;
   rviz_common::properties::IntProperty * median_buffer_size_property_;
   rviz_common::properties::BoolProperty * smooth_scaling_property_;
-  bool got_float_image_;
+  bool has_normalizable_range_;
 };
 
 }  // namespace displays

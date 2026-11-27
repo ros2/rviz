@@ -31,6 +31,7 @@
 #include "rviz_default_plugins/displays/image/ros_image_texture.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <deque>
 #include <limits>
 #include <map>
@@ -53,6 +54,9 @@
 
 #include "rviz_common/logging.hpp"
 #include "rviz_common/uniform_string_stream.hpp"
+
+#include "bayer_format.hpp"
+#include "demosaic_bayer.hpp"
 
 namespace rviz_default_plugins
 {
@@ -588,6 +592,78 @@ ROSImageTexture::convertNV12ToRGBData(const uint8_t * data_ptr, size_t data_size
   return ImageData(Ogre::PF_BYTE_RGB, new_data, new_size_in_bytes, true);
 }
 
+ImageData ROSImageTexture::convertBayerToRGBData(
+  const std::string & encoding,
+  const uint8_t *data_ptr,
+  size_t data_size_in_bytes)
+{
+  const auto format = bayerFormatFromEncoding(encoding);
+  if (!format) {
+    throw UnsupportedImageEncoding(encoding);
+  }
+
+  // Validate input
+  const uint32_t bytes_per_pixel = format->is_16bit ? 2u : 1u;
+  // Require exact packing (assumed by the min, max further on)
+  if (stride_ != static_cast<uint64_t>(width_) * bytes_per_pixel) {
+    throw UnsupportedImageEncoding(
+        encoding + ": step " + std::to_string(stride_) +
+        " does not match width " + std::to_string(width_) + " at " +
+        std::to_string(bytes_per_pixel) + " byte(s) per pixel");
+  }
+  if (data_size_in_bytes < static_cast<size_t>(height_) * stride_) {
+    throw UnsupportedImageEncoding(
+        encoding + ": data size " + std::to_string(data_size_in_bytes) +
+        " below the " + std::to_string(static_cast<size_t>(height_) * stride_) +
+        " bytes implied by height and step");
+  }
+
+  const size_t out_size = static_cast<size_t>(width_) * height_ * 3u;
+  auto out_buf = std::make_unique<uint8_t[]>(out_size);
+
+  if (!format->is_16bit) {
+    // 8-bit Bayer
+    demosaicBayer<uint8_t>(out_buf.get(), data_ptr, format->layout, height_,
+                           width_, stride_, IdentityQuantizer{});
+  } else {
+    // 16-bit Bayer
+    const uint16_t *src16 = reinterpret_cast<const uint16_t *>(data_ptr);
+    const uint32_t stride_in_pixels = stride_ / bytes_per_pixel;
+
+    double min_value;
+    double max_value;
+    getMinimalAndMaximalValueToNormalize<uint16_t>(
+        src16, static_cast<size_t>(width_) * height_, min_value, max_value);
+    const double range = max_value - min_value;
+
+    if (range > 0.0 && std::isfinite(range)) {
+      // Demosaiced 16-bit averages stay within [0, 65535],
+      // so fold the rescale into a per-frame 16-bit -> 8-bit LUT.
+      // A follow-up PR will add a to sRGB transform, as 16-bit Bayer almost
+      // always has a linear OETF, which then becomes part of this LUT.
+      // LUT gets applied after debayer so debayer runs in the linear domain.
+      const double offset = min_value;
+      std::vector<uint8_t> quantize_lut(65536);
+      const double scale = 255.0 / range;
+      for (int i = 0; i < 65536; ++i) {
+        const double scaled = (static_cast<double>(i) - offset) * scale;
+        quantize_lut[static_cast<size_t>(i)] =
+          static_cast<uint8_t>(std::lround(std::clamp(scaled, 0.0, 255.0)));
+      }
+      demosaicBayer<uint16_t>(out_buf.get(), src16, format->layout, height_,
+                              width_, stride_in_pixels,
+                              LutQuantizer{quantize_lut.data()});
+    } else {
+      // Input lacks range, meaning there is no meaningful rescale,
+      // so emit uniform black, matching convertTo8bit<T>
+      std::fill_n(out_buf.get(), out_size, uint8_t{0});
+    }
+  }
+
+  uint8_t *raw = out_buf.release();
+  return ImageData(Ogre::PF_BYTE_RGB, raw, out_size, true);
+}
+
 ImageData
 ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
   const std::string & encoding, const uint8_t * data_ptr, size_t data_size_in_bytes)
@@ -621,7 +697,7 @@ ROSImageTexture::setFormatAndNormalizeDataIfNecessary(
   {
     return convertTo8bit<uint16_t>(data_ptr, data_size_in_bytes);
   } else if (encoding.find("bayer") == 0) {
-    return ImageData(Ogre::PF_BYTE_L, data_ptr, data_size_in_bytes, false);
+    return convertBayerToRGBData(encoding, data_ptr, data_size_in_bytes);
   } else if (encoding == sensor_msgs::image_encodings::TYPE_32FC1) {
     return convertTo8bit<float>(data_ptr, data_size_in_bytes);
   } else if (encoding == sensor_msgs::image_encodings::UYVY) {
