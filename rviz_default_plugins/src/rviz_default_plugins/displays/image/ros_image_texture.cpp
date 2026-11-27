@@ -418,20 +418,22 @@ ImageData ROSImageTexture::setFormatAndNormalizeDataIfNecessary(ImageData image_
     image_data.encoding_ == sensor_msgs::image_encodings::MONO16)
   {
     image_data.size_ /= sizeof(uint16_t);
-    std::vector<uint8_t> buffer = normalize<uint16_t>(
-      reinterpret_cast<const uint16_t *>(image_data.data_ptr_),
-      image_data.size_);
+    bufferptr_ = std::make_shared<std::vector<uint8_t>>(
+      normalize<uint16_t>(
+        reinterpret_cast<const uint16_t *>(image_data.data_ptr_),
+        image_data.size_));
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
-    image_data.data_ptr_ = &buffer[0];
+    image_data.data_ptr_ = bufferptr_->data();
   } else if (image_data.encoding_.find("bayer") == 0) {
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
   } else if (image_data.encoding_ == sensor_msgs::image_encodings::TYPE_32FC1) {
     image_data.size_ /= sizeof(float);
-    std::vector<uint8_t> buffer = normalize<float>(
-      reinterpret_cast<const float *>(image_data.data_ptr_),
-      image_data.size_);
+    bufferptr_ = std::make_shared<std::vector<uint8_t>>(
+      normalize<float>(
+        reinterpret_cast<const float *>(image_data.data_ptr_),
+        image_data.size_));
     image_data.pixel_format_ = Ogre::PF_BYTE_L;
-    image_data.data_ptr_ = &buffer[0];
+    image_data.data_ptr_ = bufferptr_->data();
   } else if ( // NOLINT enforces bracket on the same line, which makes code unreadable
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422 ||
     image_data.encoding_ == sensor_msgs::image_encodings::YUV422_YUY2)
