@@ -327,6 +327,15 @@ if(BUILD_TESTING)
 
   qt5_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
 
+  ament_add_gmock(depth_cloud_mld_test
+    test/depth_cloud_mld_test.cpp
+  )
+  if(TARGET depth_cloud_mld_test)
+    target_link_libraries(depth_cloud_mld_test
+      rviz_common
+    )
+  endif()
+
   ament_add_gmock(display_factory_test
     test/display_factory_test.cpp
     src/rviz_common/display_factory.cpp
