@@ -41,6 +41,7 @@
 #include <vector>
 #include <utility>
 
+#include <OgrePixelFormat.h>  // NOLINT: cpplint cannot handle include order
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 
 #include "sensor_msgs/image_encodings.hpp"
@@ -229,6 +230,17 @@ bool ROSImageTexture::update()
 
   ImageData image_data = setFormatAndNormalizeDataIfNecessary(
     ImageData(image->encoding, image->data.data(), image->data.size()));
+
+  const size_t bytes_per_pixel = Ogre::PixelUtil::getNumElemBytes(image_data.pixel_format_);
+  if (bytes_per_pixel == 0 ||
+    image_data.size_ / bytes_per_pixel < static_cast<uint64_t>(width_) * height_)
+  {
+    RVIZ_COMMON_LOG_ERROR_STREAM(
+      "Image data size " << image_data.size_ <<
+        " smaller than width * height * bytes per pixel (" <<
+        static_cast<uint64_t>(width_) * height_ * bytes_per_pixel << ")");
+    return false;
+  }
 
   Ogre::Image ogre_image;
   try {
