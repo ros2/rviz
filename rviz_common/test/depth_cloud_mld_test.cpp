@@ -31,7 +31,9 @@
 #include <gmock/gmock.h>
 
 #include <cstdint>
+#include <cstring>
 #include <memory>
+#include <set>
 #include <string>
 
 #include "sensor_msgs/msg/camera_info.hpp"
@@ -111,6 +113,55 @@ TEST_F(DepthCloudMldTest, depth_image_with_overflowing_byte_size_is_rejected) {
   EXPECT_THROW(
     mld_.generatePointCloudFromDepth(depth, nullptr, camera_info, no_node_),
     rviz_common::MultiLayerDepthException);
+}
+
+TEST_F(DepthCloudMldTest, rejected_depth_image_does_not_affect_next_image) {
+  auto rejected_camera_info = makeCameraInfo(65536, 65537);
+  auto rejected_depth = makeImage("32FC1", 65536, 65537, 4, 16);
+
+  EXPECT_THROW(
+    mld_.generatePointCloudFromDepth(rejected_depth, nullptr, rejected_camera_info, no_node_),
+    rviz_common::MultiLayerDepthException);
+
+  auto camera_info = makeCameraInfo(256, 256);
+  auto depth = makeImage("32FC1", 256, 256, 4, 256 * 256 * 4);
+
+  sensor_msgs::msg::PointCloud2::SharedPtr cloud;
+  ASSERT_NO_THROW(
+    cloud = mld_.generatePointCloudFromDepth(depth, nullptr, camera_info, no_node_));
+  ASSERT_THAT(cloud, NotNull());
+  EXPECT_THAT(cloud->width, Eq(256u * 256u));
+}
+
+TEST_F(DepthCloudMldTest, reshaped_depth_image_uses_its_own_dimensions) {
+  auto first_camera_info = makeCameraInfo(4, 2);
+  auto first_depth = makeImage("32FC1", 4, 2, 4, 4 * 2 * 4);
+  ASSERT_NO_THROW(
+    mld_.generatePointCloudFromDepth(first_depth, nullptr, first_camera_info, no_node_));
+
+  auto camera_info = makeCameraInfo(2, 4);
+  auto depth = makeImage("32FC1", 2, 4, 4, 2 * 4 * 4);
+  const float one = 1.0f;
+  for (size_t i = 0; i < depth->data.size(); i += sizeof(float)) {
+    std::memcpy(&depth->data[i], &one, sizeof(float));
+  }
+
+  sensor_msgs::msg::PointCloud2::SharedPtr cloud;
+  ASSERT_NO_THROW(
+    cloud = mld_.generatePointCloudFromDepth(depth, nullptr, camera_info, no_node_));
+  ASSERT_THAT(cloud, NotNull());
+  ASSERT_THAT(cloud->width, Eq(2u * 4u));
+
+  std::set<float> xs;
+  std::set<float> ys;
+  for (uint32_t i = 0; i < cloud->width; ++i) {
+    float xy[2];
+    std::memcpy(xy, &cloud->data[i * cloud->point_step], sizeof(xy));
+    xs.insert(xy[0]);
+    ys.insert(xy[1]);
+  }
+  EXPECT_THAT(xs, SizeIs(2));
+  EXPECT_THAT(ys, SizeIs(4));
 }
 
 TEST_F(DepthCloudMldTest, undersized_color_image_is_rejected) {

@@ -30,6 +30,7 @@
 
 #include "rviz_common/depth_cloud_mld.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <cstdint>
@@ -123,9 +124,9 @@ void MultiLayerDepth::reset()
 {
   if (occlusion_compensation_) {
     // reset shadow buffer
-    memset(&shadow_depth_[0], 0, sizeof(float) * shadow_depth_.size());
-    memset(&shadow_buffer_[0], 0, sizeof(uint8_t) * shadow_buffer_.size());
-    memset(&shadow_timestamp_[0], 0, sizeof(double) * shadow_timestamp_.size());
+    std::fill(shadow_depth_.begin(), shadow_depth_.end(), 0.0f);
+    std::fill(shadow_buffer_.begin(), shadow_buffer_.end(), 0);
+    std::fill(shadow_timestamp_.begin(), shadow_timestamp_.end(), 0.0);
   }
 }
 
@@ -163,9 +164,9 @@ void MultiLayerDepth::initializeConversion(
   uint32_t width = depth_msg->width;
   uint32_t height = depth_msg->height;
 
-  uint32_t size = width * height;
+  const size_t size = static_cast<size_t>(width) * height;
 
-  if (size != static_cast<uint32_t>(shadow_depth_.size())) {
+  if (width != projection_map_x_.size() || height != projection_map_y_.size()) {
     // Allocate memory for shadow processing
     shadow_depth_.resize(size, 0.0f);
     shadow_timestamp_.resize(size, 0.0);
@@ -219,10 +220,9 @@ MultiLayerDepth::generatePointCloudSL(
   const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg,
   std::vector<uint32_t> & rgba_color_raw)
 {
-  validateImageData(depth_msg, sizeof(T), "Depth");
-
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg = initPointCloud();
-  cloud_msg->data.resize(depth_msg->height * depth_msg->width * cloud_msg->point_step);
+  cloud_msg->data.resize(
+    static_cast<size_t>(depth_msg->height) * depth_msg->width * cloud_msg->point_step);
 
   uint32_t * color_img_ptr = nullptr;
 
@@ -298,10 +298,9 @@ MultiLayerDepth::generatePointCloudML(
   std::vector<uint32_t> & rgba_color_raw,
   ros_integration::RosNodeAbstractionIface::WeakPtr rviz_ros_node)
 {
-  validateImageData(depth_msg, sizeof(T), "Depth");
-
   sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg = initPointCloud();
-  cloud_msg->data.resize(depth_msg->height * depth_msg->width * cloud_msg->point_step * 2);
+  cloud_msg->data.resize(
+    static_cast<size_t>(depth_msg->height) * depth_msg->width * cloud_msg->point_step * 2);
 
   uint32_t * color_img_ptr = nullptr;
 
@@ -430,7 +429,7 @@ void MultiLayerDepth::convertColor(
   }
 
   size_t i;
-  size_t num_pixel = color_msg->width * color_msg->height;
+  size_t num_pixel = static_cast<size_t>(color_msg->width) * color_msg->height;
 
   // query image properties
   int num_channels = sensor_msgs::image_encodings::numChannels(color_msg->encoding);
@@ -513,6 +512,13 @@ MultiLayerDepth::generatePointCloudFromDepth(
   int bitDepth = sensor_msgs::image_encodings::bitDepth(depth_msg->encoding);
   int numChannels = sensor_msgs::image_encodings::numChannels(depth_msg->encoding);
 
+  if ((bitDepth != 16 && bitDepth != 32) || numChannels != 1) {
+    std::string error_msg("Depth image has invalid format (only 16 bit and float are supported)!");
+    throw(rviz_common::MultiLayerDepthException(error_msg));
+  }
+
+  validateImageData(depth_msg, static_cast<size_t>(bitDepth / 8), "Depth");
+
   // precompute projection matrix and initialize shadow buffer
   initializeConversion(depth_msg, camera_info_msg);
 
@@ -565,11 +571,6 @@ MultiLayerDepth::generatePointCloudFromDepth(
     }
   }
 
-  if (!point_cloud_out) {
-    std::string error_msg("Depth image has invalid format (only 16 bit and float are supported)!");
-    throw(rviz_common::MultiLayerDepthException(error_msg));
-  }
-
   return point_cloud_out;
 }
 
@@ -619,7 +620,8 @@ void MultiLayerDepth::finalizePointCloud(
 {
   point_cloud->width = static_cast<uint32_t>(size);
   point_cloud->height = static_cast<uint32_t>(1);
-  point_cloud->data.resize(point_cloud->height * point_cloud->width * point_cloud->point_step);
+  point_cloud->data.resize(
+    static_cast<size_t>(point_cloud->height) * point_cloud->width * point_cloud->point_step);
   point_cloud->row_step = point_cloud->point_step * point_cloud->width;
 }
 
