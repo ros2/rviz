@@ -45,11 +45,7 @@
 
 #include <cstring>
 
-<<<<<<< HEAD
-=======
-#include <OgreHardwarePixelBuffer.h>  // NOLINT: cpplint cannot handle include order
 #include <OgrePixelFormat.h>  // NOLINT: cpplint cannot handle include order
->>>>>>> 0992ffc (Fix out-of-bounds read in ROSImageTexture::update() (#1943))
 #include <OgreTextureManager.h>  // NOLINT: cpplint cannot handle include order
 
 #include "sensor_msgs/image_encodings.hpp"
@@ -238,9 +234,6 @@ bool ROSImageTexture::update()
   ImageData image_data = setFormatAndNormalizeDataIfNecessary(
     image->encoding, data_ptr, data_size);
 
-<<<<<<< HEAD
-  Ogre::Image ogre_image;
-=======
   const size_t bytes_per_pixel = Ogre::PixelUtil::getNumElemBytes(image_data.pixel_format_);
   if (bytes_per_pixel == 0 ||
     image_data.size_in_bytes_ / bytes_per_pixel < static_cast<uint64_t>(width_) * height_)
@@ -252,7 +245,7 @@ bool ROSImageTexture::update()
     return false;
   }
 
->>>>>>> 0992ffc (Fix out-of-bounds read in ROSImageTexture::update() (#1943))
+  Ogre::Image ogre_image;
   try {
     Ogre::DataStreamPtr pixel_stream;
     pixel_stream.reset(
