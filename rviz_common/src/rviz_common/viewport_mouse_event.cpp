@@ -31,6 +31,7 @@
 #include "rviz_common/viewport_mouse_event.hpp"
 
 #include <QMouseEvent>
+#include <QPointF>
 #include <QWheelEvent>
 
 #include "rviz_common/render_panel.hpp"
@@ -39,34 +40,53 @@
 namespace rviz_common
 {
 
+// Qt reports positions in logical pixels, the Ogre viewport is in device pixels.
 ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, int lx, int ly)
+: ViewportMouseEvent(
+    p, e, (QPointF(lx, ly) * p->getRenderWindow()->devicePixelRatio()).toPoint())
+{}
+
+ViewportMouseEvent::ViewportMouseEvent(
+  RenderPanel * p, QMouseEvent * e, const QPoint & previous_position)
 : panel(p),
   type(e->type()),
   device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
-  x(e->position().x() * device_pixel_ratio),
-  y(e->position().y() * device_pixel_ratio),
+  x(0),
+  y(0),
   wheel_delta(0),
   acting_button(e->button()),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
-  last_x(lx * device_pixel_ratio),
-  last_y(ly * device_pixel_ratio)
+  last_x(previous_position.x()),
+  last_y(previous_position.y())
 {
+  const QPoint position = (e->position() * panel->getRenderWindow()->devicePixelRatio()).toPoint();
+  x = position.x();
+  y = position.y();
 }
 
 ViewportMouseEvent::ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx, int ly)
+: ViewportMouseEvent(
+    p, e, (QPointF(lx, ly) * p->getRenderWindow()->devicePixelRatio()).toPoint())
+{}
+
+ViewportMouseEvent::ViewportMouseEvent(
+  RenderPanel * p, QWheelEvent * e, const QPoint & previous_position)
 : panel(p),
   type(e->type()),
   device_pixel_ratio(static_cast<int>(panel->getRenderWindow()->devicePixelRatio())),
-  x(e->position().x() * device_pixel_ratio),
-  y(e->position().y() * device_pixel_ratio),
+  x(0),
+  y(0),
   wheel_delta(e->angleDelta().y()),
   acting_button(Qt::NoButton),
   buttons_down(e->buttons()),
   modifiers(e->modifiers()),
-  last_x(lx * device_pixel_ratio),
-  last_y(ly * device_pixel_ratio)
+  last_x(previous_position.x()),
+  last_y(previous_position.y())
 {
+  const QPoint position = (e->position() * panel->getRenderWindow()->devicePixelRatio()).toPoint();
+  x = position.x();
+  y = position.y();
 }
 
 bool ViewportMouseEvent::left()

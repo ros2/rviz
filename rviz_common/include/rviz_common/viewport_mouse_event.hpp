@@ -33,6 +33,7 @@
 #define RVIZ_COMMON__VIEWPORT_MOUSE_EVENT_HPP_
 
 #include <QEvent>
+#include <QPoint>
 #include <Qt>
 
 #include "rviz_common/visibility_control.hpp"
@@ -48,13 +49,21 @@ class RenderPanel;
 class RVIZ_COMMON_PUBLIC ViewportMouseEvent
 {
 public:
-  /// Constructor for use with a QMouseEvent.
+  /// Construct from a QMouseEvent and the previous position in device pixels.
+  ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, const QPoint & previous_position);
+
+  /// Construct from a QMouseEvent and the previous position in logical pixels.
+  [[deprecated("Pass the previous position as a QPoint in device pixels instead")]]
   ViewportMouseEvent(RenderPanel * p, QMouseEvent * e, int lx, int ly);
 
   // Qt has a separate QWheelEvent for mouse wheel events which is not
   // a subclass of QMouseEvent, but has a lot of overlap with it.
 
-  /// Constructor for use with a QWheelEvent.
+  /// Construct from a QWheelEvent and the previous position in device pixels.
+  ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, const QPoint & previous_position);
+
+  /// Construct from a QWheelEvent and the previous position in logical pixels.
+  [[deprecated("Pass the previous position as a QPoint in device pixels instead")]]
   ViewportMouseEvent(RenderPanel * p, QWheelEvent * e, int lx, int ly);
 
   // Convenience functions for getting the state of the buttons and
@@ -90,7 +99,14 @@ public:
 
   RenderPanel * panel;
   QEvent::Type type;
+  /// Display scale factor, truncated to an integer. Retained for compatibility only.
+  /**
+   * Do not use this to convert coordinates. Fractional scale factors such as 1.25 and
+   * 1.5 are common on desktop and truncate to 1 here, which silently drops the
+   * conversion. The coordinates below use the full-precision ratio instead.
+   */
   int device_pixel_ratio;
+  /// Cursor position in device pixels, matching the Ogre viewport's dimensions.
   int x;
   int y;
   /// Angle that the common vertical mouse wheel was rotated
@@ -99,6 +115,7 @@ public:
   Qt::MouseButton acting_button;
   Qt::MouseButtons buttons_down;
   Qt::KeyboardModifiers modifiers;
+  /// Previous cursor position in device pixels, in the same space as x and y.
   int last_x;
   int last_y;
 };
