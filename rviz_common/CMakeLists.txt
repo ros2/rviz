@@ -331,6 +331,99 @@ if(BUILD_TESTING)
 
   qt5_wrap_cpp(rviz_common_test_frame_manager_moc src/rviz_common/frame_manager.hpp)
 
+<<<<<<< HEAD
+=======
+  # Common test support objects to avoid redundant compilation
+  add_library(test_support_objects OBJECT
+    test/mock_display.cpp
+    test/mock_property_change_receiver.cpp
+    test/display_context_fixture.cpp
+    test/ogre_testing_environment.cpp
+    ${rviz_common_test_moc_files}
+  )
+  target_include_directories(test_support_objects PRIVATE
+    include
+    test
+  )
+  target_link_libraries(test_support_objects PUBLIC
+    rviz_common
+    GTest::gmock
+    Qt6::Widgets
+    rviz_ogre_vendor::OgreMain
+    rviz_ogre_vendor::OgreOverlay
+  )
+
+  set(TEST_SUPPORT_OBJECTS $<TARGET_OBJECTS:test_support_objects>)
+
+  ament_add_gmock(render_panel_test
+    test/render_panel_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET render_panel_test)
+    target_include_directories(render_panel_test PRIVATE test)
+    target_link_libraries(render_panel_test
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      Qt6::Widgets
+    )
+  endif()
+
+  # Consolidate core tests
+  ament_add_gmock(rviz_common_core_tests
+    test/config_test.cpp
+    test/uniform_string_stream_test.cpp
+    test/property_test.cpp
+    test/display_test.cpp
+    test/message_filter_display_test.cpp
+    test/mock_display_group.cpp
+    test/properties/qos_profile_property_test.cpp
+    test/visualizer_app_test.cpp
+    test/ros_node_abstraction_test.cpp
+    test/ros_topic_utils_test.cpp
+    test/transformation/identity_frame_transformer_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET rviz_common_core_tests)
+    target_include_directories(rviz_common_core_tests PRIVATE test)
+    target_link_libraries(rviz_common_core_tests
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+      Qt6::Widgets
+      yaml-cpp::yaml-cpp
+    )
+  endif()
+
+  ament_add_gmock(depth_cloud_mld_test
+    test/depth_cloud_mld_test.cpp
+  )
+  if(TARGET depth_cloud_mld_test)
+    target_link_libraries(depth_cloud_mld_test
+      rviz_common
+    )
+  endif()
+
+  # Consolidate interaction tests
+  ament_add_gmock(rviz_common_interaction_tests
+    test/interaction/selection_manager_test.cpp
+    test/interaction/selection_handler_test.cpp
+    ${TEST_SUPPORT_OBJECTS}
+    ${SKIP_DISPLAY_TESTS}
+  )
+  if(TARGET rviz_common_interaction_tests)
+    target_include_directories(rviz_common_interaction_tests PRIVATE test)
+    target_link_libraries(rviz_common_interaction_tests
+      rviz_common
+      rviz_ogre_vendor::OgreMain
+      rviz_ogre_vendor::OgreOverlay
+    )
+  endif()
+
+  # Display factory test (keeps its unique src compilation for now)
+>>>>>>> 25dc3ab (Fix out-of-bounds reads in DepthCloud display (#1942))
   ament_add_gmock(display_factory_test
     test/display_factory_test.cpp
     src/rviz_common/display_factory.cpp
